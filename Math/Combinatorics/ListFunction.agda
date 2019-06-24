@@ -109,3 +109,13 @@ module _ {a} {A : Set a} where
   partitionsAll (x ∷ xs) =
     map ([ x ] ∷_) yss ++ concatMap (applyEach (x ∷_)) yss
     where yss = partitionsAll xs
+
+module _ {a} {A : Set a} where
+  insertEverywhere : A → List A → List (List A)
+  insertEverywhere x []       = [ [ x ] ]
+  insertEverywhere x (y ∷ ys) = (x ∷ y ∷ ys) ∷ map (y ∷_) (insertEverywhere x ys)
+
+module _ {a} {A : Set a} where
+  permutations : List A → List (List A)
+  permutations []       = [ [] ]
+  permutations (x ∷ xs) = concatMap (insertEverywhere x) (permutations xs)
