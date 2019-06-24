@@ -21,7 +21,7 @@ module _ {a} {A : Set a} where
   applyEach f (x ∷ xs) = (f x ∷ xs) ∷ map (x ∷_) (applyEach f xs)
 
 module _ {a} {A : Set a} where
-  -- combinations
+  -- Combinations
   -- combinations 2 (upTo 3)
   -- >>> (0 ∷ 1 ∷ []) ∷ (0 ∷ 2 ∷ []) ∷
   -- >>> (0 ∷ 3 ∷ []) ∷ (1 ∷ 2 ∷ []) ∷ (1 ∷ 3 ∷ []) ∷ (2 ∷ 3 ∷ []) ∷ []
@@ -41,6 +41,7 @@ module _ {a} {A : Set a} where
     map (Prod.map₁ (x ∷_)) (combinationsWithComplement k xs) ++
     map (Prod.map₂ (x ∷_)) (combinationsWithComplement (suc k) xs)
 
+  -- split list into two list (include empty list and order is preserved)
   -- splits₂ (upTo 3)
   -- >>> ([] , 0 ∷ 1 ∷ 2 ∷ []) List⁺.∷
   -- >>> (0 ∷ [] , 1 ∷ 2 ∷ []) ∷
@@ -64,10 +65,7 @@ module _ {a} {A : Set a} where
   splits⁺₂Acc x (y ∷ xs) = (x NE.∷ [] , y NE.∷ xs) ∷
                            map (Prod.map₁ (x NE.∷⁺_)) (splits⁺₂Acc y xs)
 
-  -- splits⁺₂ (nats⁺ 3)
-  -- >>> (0 List⁺.∷ [] , 1 List⁺.∷ 2 ∷ 3 ∷ []) ∷
-  -- >>> (0 List⁺.∷ 1 ∷ [] , 2 List⁺.∷ 3 ∷ []) ∷
-  -- >>> (0 List⁺.∷ 1 ∷ 2 ∷ [] , 3 List⁺.∷ []) ∷ []
+  -- split list into two list (exclude empty list and order is preserved)
   splits⁺₂ : List⁺ A → List (List⁺ A × List⁺ A)
   splits⁺₂ (x NE.∷ xs) = splits⁺₂Acc x xs
 
@@ -91,7 +89,8 @@ module _ {a} {A : Set a} where
   splits⁺All : List⁺ A → List⁺ (List⁺ (List⁺ A))
   splits⁺All (x NE.∷ xs) = splits⁺AllAcc x xs
 
-  -- Generalization of combinationsWithComplement
+  -- Partition of set
+  -- Generalization of `combinationsWithComplement`
   -- partitions 2 (upTo 3)
   -- >>> ((0 ∷ []) ∷ (1 ∷ 2 ∷ []) ∷ []) ∷
   -- >>> ((0 ∷ 1 ∷ []) ∷ (2 ∷ []) ∷ []) ∷
@@ -111,11 +110,15 @@ module _ {a} {A : Set a} where
     where yss = partitionsAll xs
 
 module _ {a} {A : Set a} where
+  -- insertEverywhere 100 (upTo 2)
+  -- >>> (100 ∷ 0 ∷ 1 ∷ []) ∷ (0 ∷ 100 ∷ 1 ∷ []) ∷ (0 ∷ 1 ∷ 100 ∷ []) ∷ []
   insertEverywhere : A → List A → List (List A)
   insertEverywhere x []       = [ [ x ] ]
   insertEverywhere x (y ∷ ys) = (x ∷ y ∷ ys) ∷ map (y ∷_) (insertEverywhere x ys)
 
 module _ {a} {A : Set a} where
+  -- permutations (upTo 2)
+  -- >>> (0 ∷ 1 ∷ []) ∷ (1 ∷ 0 ∷ []) ∷ []
   permutations : List A → List (List A)
   permutations []       = [ [] ]
   permutations (x ∷ xs) = concatMap (insertEverywhere x) (permutations xs)

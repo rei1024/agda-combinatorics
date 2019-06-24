@@ -33,10 +33,10 @@ module _ {a} {A : Set a} where
 
   combinationsWithComplement : ∀ m {n} → Vec A (m + n) →
                                List (Vec A m × Vec A n)
-  combinationsWithComplement 0                 xs           = [ [] , xs ]
-  combinationsWithComplement m@(suc _) {0}     xs           =
+  combinationsWithComplement 0                 xs       = [ [] , xs ]
+  combinationsWithComplement m@(suc _) {0}     xs       =
     [ subst (Vec A) (ℕₚ.+-identityʳ m) xs , [] ]
-  combinationsWithComplement (suc m)   {suc n} (x Vec.∷ xs) =
+  combinationsWithComplement (suc m)   {suc n} (x ∷ xs) =
     map (Prod.map₁ (x ∷_)) (combinationsWithComplement m xs) ++
     map (Prod.map₂ (x ∷_)) (combinationsWithComplement (suc m) xs′)
       where xs′ = subst (Vec A) (ℕₚ.+-suc m n) xs
@@ -48,11 +48,11 @@ module _ {a} {A : Set a} where
 
   splits : ∀ k → List A → List (Vec (List A) k)
   splits 0             xs = []
-  splits 1             xs = [ xs Vec.∷ Vec.[] ]
+  splits 1             xs = [ xs ∷ [] ]
   splits (suc (suc k)) xs = concatMap f (splits (suc k) xs)
     where
     f : Vec (List A) (suc k) → List (Vec (List A) (suc (suc k)))
-    f (ys Vec.∷ yss) =
+    f (ys ∷ yss) =
       map (λ { (as , bs) → as ∷ bs ∷ yss }) (NE.toList (ListFun.splits₂ ys))
 
   splits⁺₂ : ∀ {n} → Vec A (1 + n) → Vec (List⁺ A × List⁺ A) n
