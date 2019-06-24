@@ -369,8 +369,8 @@ P[n,k]≤n! (suc n) (suc k) = begin
 
 ------------------------------------------------------------------------
 -- Properties of CRec
--- proved by induction and P[1+n,1+k]≡[1+k]*P[n,k]+P[n,1+k]
 
+-- proved by induction and P[1+n,1+k]≡[1+k]*P[n,k]+P[n,1+k]
 CRec[n,k]*k!≡P[n,k] : ∀ n k → CRec n k * k ! ≡ P n k
 CRec[n,k]*k!≡P[n,k] n       0       = refl
 CRec[n,k]*k!≡P[n,k] 0       (suc k) = refl
