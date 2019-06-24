@@ -6,17 +6,19 @@
 
 module Math.Combinatorics.Function where
 
-open import Data.Unit using (tt)
-open import Data.Sum using (_⊎_; inj₁; inj₂)
+import Algebra.Operations.CommutativeMonoid as CommutativeMonoidOperations
+open import Data.Fin using (toℕ)
 open import Data.Nat
 open import Data.Nat.DivMod
-open import Data.Fin using (toℕ)
 open import Data.Nat.Properties using (+-0-commutativeMonoid)
-open import Algebra.Operations.CommutativeMonoid +-0-commutativeMonoid
+open import Data.Sum using (_⊎_; inj₁; inj₂)
+open import Data.Unit using (tt)
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary using (yes; no; ¬_)
 open import Relation.Nullary.Decidable using (False; fromWitnessFalse)
 open import Relation.Unary as U
+
+open CommutativeMonoidOperations +-0-commutativeMonoid
 
 infix 10 _! _!!
 

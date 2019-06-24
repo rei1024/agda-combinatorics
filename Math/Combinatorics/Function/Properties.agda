@@ -7,20 +7,20 @@
 module Math.Combinatorics.Function.Properties where
 
 -- stdlib
-open import Data.Unit using (tt)
 open import Data.Empty using (⊥-elim)
-open import Data.Product hiding (Σ)
-open import Data.Sum
+open import Data.List
+open import Data.Maybe
 open import Data.Nat
 open import Data.Nat.Properties
 open import Data.Nat.DivMod
-open import Data.List
-open import Data.Maybe
+open import Data.Product hiding (Σ)
+open import Data.Sum
+open import Data.Unit using (tt)
+open import Function
+open import Relation.Binary
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
 open import Relation.Nullary.Decidable
-open import Relation.Binary
-open import Function
 
 -- agda-combinatorics
 open import Math.Combinatorics.Function
