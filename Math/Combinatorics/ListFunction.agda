@@ -64,10 +64,10 @@ module _ {a} {A : Set a} where
   splits⁺₂Acc x (y ∷ xs) = (x NE.∷ [] , y NE.∷ xs) ∷
                            map (Prod.map₁ (x NE.∷⁺_)) (splits⁺₂Acc y xs)
 
-  -- splits⁺₂ (nats⁺ 3) →
-  -- (0 List⁺.∷ [] , 1 List⁺.∷ 2 ∷ 3 ∷ []) ∷
-  -- (0 List⁺.∷ 1 ∷ [] , 2 List⁺.∷ 3 ∷ []) ∷
-  -- (0 List⁺.∷ 1 ∷ 2 ∷ [] , 3 List⁺.∷ []) ∷ []
+  -- splits⁺₂ (nats⁺ 3)
+  -- >>> (0 List⁺.∷ [] , 1 List⁺.∷ 2 ∷ 3 ∷ []) ∷
+  -- >>> (0 List⁺.∷ 1 ∷ [] , 2 List⁺.∷ 3 ∷ []) ∷
+  -- >>> (0 List⁺.∷ 1 ∷ 2 ∷ [] , 3 List⁺.∷ []) ∷ []
   splits⁺₂ : List⁺ A → List (List⁺ A × List⁺ A)
   splits⁺₂ (x NE.∷ xs) = splits⁺₂Acc x xs
 
