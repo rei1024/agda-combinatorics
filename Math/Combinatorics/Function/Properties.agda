@@ -13,7 +13,7 @@ open import Data.Maybe
 open import Data.Nat
 open import Data.Nat.Properties
 open import Data.Nat.DivMod
-open import Data.Product hiding (Σ)
+open import Data.Product
 open import Data.Sum
 open import Data.Unit using (tt)
 open import Function

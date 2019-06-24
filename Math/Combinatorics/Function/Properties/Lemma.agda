@@ -88,7 +88,6 @@ m<n⇒n∸m≢0 {m} {n} m<n n∸m≡0 = (λ x → x (sym n∸m≡0)) $ <⇒≢ $
 *-cancelʳ-≤′ m n {suc o} tt = *-cancelʳ-≤ m n o
 
 -- TODO upadte stdlib
-
 *-cancelʳ-≡′ : ∀ m n {o} → False (o ≟ 0) → m * o ≡ n * o → m ≡ n
 *-cancelʳ-≡′ m n {suc o} tt = *-cancelʳ-≡ m n
 
@@ -117,7 +116,6 @@ lemma₃ .(suc (n + k)) n              | greater .n k = inj₂ (s≤s (≤-steps
     ((m * suc n) div suc n) * suc n
   ∎
 
--- m≡n*o⇒m/o≡n
 m≡n*o⇒m/o≡n : ∀ m n o → (wit : False (o ≟ 0)) → m ≡ n * o → n ≡ _div_ m o {wit}
 m≡n*o⇒m/o≡n m n (suc o) tt m≡n*[1+o] = sym $ begin-equality
   m div suc o           ≡⟨ cong (_div suc o) $ m≡n*[1+o] ⟩
