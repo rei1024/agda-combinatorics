@@ -43,12 +43,12 @@ module _ {a} {A : Set a} where
 
   -- split list into two list (include empty list and order is preserved)
   -- splits₂ (upTo 3)
-  -- >>> ([] , 0 ∷ 1 ∷ 2 ∷ []) List⁺.∷
+  -- >>> ([] , 0 ∷ 1 ∷ 2 ∷ []) ∷
   -- >>> (0 ∷ [] , 1 ∷ 2 ∷ []) ∷
   -- >>> (0 ∷ 1 ∷ [] , 2 ∷ []) ∷ (0 ∷ 1 ∷ 2 ∷ [] , []) ∷ []
-  splits₂ : List A → List⁺ (List A × List A)
-  splits₂ []       = ([] , []) NE.∷ []
-  splits₂ (x ∷ xs) = ([] , x ∷ xs) NE.∷⁺ NE.map (Prod.map₁ (x ∷_)) (splits₂ xs)
+  splits₂ : List A → List (List A × List A)
+  splits₂ []       = ([] , []) ∷ []
+  splits₂ (x ∷ xs) = ([] , x ∷ xs) ∷ map (Prod.map₁ (x ∷_)) (splits₂ xs)
 
   splits : ℕ → List A → List (List (List A))
   splits 0             xs = []
@@ -57,8 +57,7 @@ module _ {a} {A : Set a} where
     where
     f : List (List A) → List (List (List A))
     f []         = []
-    f (ys ∷ yss) = NE.toList $
-      NE.map (λ { (as , bs) → as ∷ bs ∷ yss }) (splits₂ ys)
+    f (ys ∷ yss) = map (λ { (as , bs) → as ∷ bs ∷ yss }) (splits₂ ys)
 
   splits⁺₂Acc : A → List A → List (List⁺ A × List⁺ A)
   splits⁺₂Acc x []       = []

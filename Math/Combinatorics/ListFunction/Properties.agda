@@ -122,3 +122,7 @@ module _ {a b} {A : Set a} {B : Set b} where
 
   -- unique-combinations : Unique xs → Unique (combinations k xs)
   -- All (⊆ xs) (combinations k xs)
+  -- length-permutations : length (permutations xs) ≡ length xs !
+  -- map-proj₁-combinationsWithComplement : map proj₁ (combinationsWithComplement k xs) ≡ combinations k xs
+  -- splits₂-defn : splits₂ xs ≡ zip _,_ (inits xs) (tails xs)
+  -- length-splits₂ : length (splits₂ xs) ≡ 1 + length xs
