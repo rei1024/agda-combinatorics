@@ -68,6 +68,15 @@ module _ {a} {A : Set a} where
     C (length (x ∷ xs)) (suc k)
       ∎
 
+  All-length-combinations : ∀ (k : ℕ) (xs : List A) →
+                            All (λ ys → length ys ≡ k) (combinations k xs)
+  All-length-combinations 0       xs = refl ∷ []
+  All-length-combinations (suc k) []       = []
+  All-length-combinations (suc k) (x ∷ xs) = Allₚ.++⁺ (Allₚ.map⁺ $ All.map (cong suc) $ All-length-combinations k xs) (All-length-combinations (suc k) xs)
+
+  ∈-length-combinations : ∀ (xs : List A) k ys → xs ∈ combinations k ys → length xs ≡ k
+  ∈-length-combinations xs k ys xs∈combinations[k,ys] = All.lookup (All-length-combinations k ys) xs∈combinations[k,ys]
+
   combinations-⊆⇒∈ : ∀ {xs ys : List A} → xs ⊆ ys → xs ∈ combinations (length xs) ys
   combinations-⊆⇒∈ {[]}     {ys}     xs⊆ys = here refl
   combinations-⊆⇒∈ {x ∷ xs} {y ∷ ys} (.y  ∷ʳ x∷xs⊆ys) =
@@ -96,3 +105,4 @@ module _ {a} {A : Set a} where
   combinations-⊆⇔∈ = equivalence combinations-⊆⇒∈ combinations-∈⇒⊆
 
   -- unique-combinations : Unique xs → Unique (combinations k xs)
+-- All (⊆ xs) (combinations k xs)
