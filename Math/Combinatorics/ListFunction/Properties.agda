@@ -7,18 +7,26 @@
 module Math.Combinatorics.ListFunction.Properties where
 
 -- stdlib
-open import Data.List
+open import Data.List hiding (_∷ʳ_)
 import Data.List.Properties as Lₚ
+open import Data.List.Membership.Propositional using (_∈_)
+import Data.List.Membership.Propositional.Properties as ∈ₚ
+open import Data.List.Relation.Binary.Sublist.Propositional using (_⊆_; []; _∷_; _∷ʳ_)
 open import Data.List.Relation.Unary.All as All using (All; []; _∷_)
 import Data.List.Relation.Unary.All.Properties as Allₚ
+open import Data.List.Relation.Unary.Any as Any using (Any; here; there)
 open import Data.Nat
+open import Data.Product using (_×_; _,_; ∃)
+open import Data.Sum using (inj₁; inj₂)
 open import Function
+open import Function.Equivalence using (_⇔_; equivalence)
 open import Relation.Binary.PropositionalEquality
 
 -- agda-combinatorics
 open import Math.Combinatorics.Function
 open import Math.Combinatorics.Function.Properties
 open import Math.Combinatorics.ListFunction
+import Math.Combinatorics.ListFunction.Properties.Lemma as Lemma
 
 ------------------------------------------------------------------------
 -- Properties of `applyEach`
@@ -60,7 +68,31 @@ module _ {a} {A : Set a} where
     C (length (x ∷ xs)) (suc k)
       ∎
 
-  -- combinations-⊆⇒∈ : xs ⊆ ys → xs ∈ combinations (length xs) ys
-  -- combinations-∈⇒⊆ : xs ∈ combinations (length xs) ys → xs ⊆ ys
-  -- combinations-⊆⇔∈ : xs ⊆ ys ⇔ xs ∈ combinations (length xs) ys
+  combinations-⊆⇒∈ : ∀ {xs ys : List A} → xs ⊆ ys → xs ∈ combinations (length xs) ys
+  combinations-⊆⇒∈ {[]}     {ys}     xs⊆ys = here refl
+  combinations-⊆⇒∈ {x ∷ xs} {y ∷ ys} (.y  ∷ʳ x∷xs⊆ys) =
+    ∈ₚ.∈-++⁺ʳ (map (y ∷_) (combinations (length xs) ys)) (combinations-⊆⇒∈ x∷xs⊆ys)
+  combinations-⊆⇒∈ {x ∷ xs} {.x ∷ ys} (refl ∷  xs⊆ys)   =
+    ∈ₚ.∈-++⁺ˡ $ ∈ₚ.∈-map⁺ (x ∷_) $ combinations-⊆⇒∈ xs⊆ys
+
+  combinations-∈⇒⊆ : ∀ {xs ys : List A} → xs ∈ combinations (length xs) ys → xs ⊆ ys
+  combinations-∈⇒⊆ {[]}     {ys} xs∈combinations[length[xs],ys] = Lemma.[]⊆xs ys
+  combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} x∷xs∈combinations[length[x∷xs],y∷ys] with ∈ₚ.∈-++⁻ (map (y ∷_) (combinations (length xs) ys)) x∷xs∈combinations[length[x∷xs],y∷ys]
+  ... | inj₁ x∷xs∈map[y∷-][combinations[length[xs],ys]] with ∈ₚ.∈-map⁻ (y ∷_) x∷xs∈map[y∷-][combinations[length[xs],ys]] -- ∷ ∃z→z∈combinations[length[xs],ys]×x∷xs≡y∷z
+  combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} _ | inj₁ _ | z , (z∈combinations[length[xs],ys] , x∷xs≡y∷z) = x≡y ∷ xs⊆ys
+    where
+    xs≡z : xs ≡ z
+    xs≡z = Lₚ.∷-injectiveʳ x∷xs≡y∷z
+    x≡y : x ≡ y
+    x≡y = Lₚ.∷-injectiveˡ x∷xs≡y∷z
+    xs⊆ys : xs ⊆ ys
+    xs⊆ys = combinations-∈⇒⊆ $ subst (λ v → v ∈ combinations (length xs) ys) (sym xs≡z) z∈combinations[length[xs],ys]
+  combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} _ | inj₂ x∷xs∈combinations[length[x∷xs],ys]         = y ∷ʳ x∷xs⊆ys
+    where
+    x∷xs⊆ys : x ∷ xs ⊆ ys
+    x∷xs⊆ys = combinations-∈⇒⊆ x∷xs∈combinations[length[x∷xs],ys]
+
+  combinations-⊆⇔∈ : ∀ {xs ys : List A} → xs ⊆ ys ⇔ xs ∈ combinations (length xs) ys
+  combinations-⊆⇔∈ = equivalence combinations-⊆⇒∈ combinations-∈⇒⊆
+
   -- unique-combinations : Unique xs → Unique (combinations k xs)
