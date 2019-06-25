@@ -16,7 +16,7 @@ open import Data.List.Relation.Unary.All as All using (All; []; _∷_)
 import Data.List.Relation.Unary.All.Properties as Allₚ
 open import Data.List.Relation.Unary.Any as Any using (Any; here; there)
 open import Data.Nat
-open import Data.Product using (_×_; _,_; ∃)
+open import Data.Product as Prod using (_×_; _,_; ∃; proj₁; proj₂)
 open import Data.Sum using (inj₁; inj₂)
 open import Function
 open import Function.Equivalence using (_⇔_; equivalence)
@@ -37,9 +37,12 @@ module _ {a} {A : Set a} where
                      length (applyEach f xs) ≡ length xs
   length-applyEach f []       = refl
   length-applyEach f (x ∷ xs) = begin
-    1 + length (map (x ∷_) (applyEach f xs)) ≡⟨ cong suc $ Lₚ.length-map (x ∷_) (applyEach f xs ) ⟩
-    1 + length (applyEach f xs)              ≡⟨ cong suc $ length-applyEach f xs ⟩
-    1 + length xs                            ∎
+    1 + length (map (x ∷_) (applyEach f xs))
+      ≡⟨ cong suc $ Lₚ.length-map (x ∷_) (applyEach f xs ) ⟩
+    1 + length (applyEach f xs)
+      ≡⟨ cong suc $ length-applyEach f xs ⟩
+    1 + length xs
+      ∎
 
   All-length-applyEach : ∀ (f : A → A) (xs : List A) →
                          All (λ ys → length ys ≡ length xs) (applyEach f xs)
@@ -72,10 +75,13 @@ module _ {a} {A : Set a} where
                             All (λ ys → length ys ≡ k) (combinations k xs)
   All-length-combinations 0       xs       = refl ∷ []
   All-length-combinations (suc k) []       = []
-  All-length-combinations (suc k) (x ∷ xs) = Allₚ.++⁺ (Allₚ.map⁺ $ All.map (cong suc) $ All-length-combinations k xs) (All-length-combinations (suc k) xs)
+  All-length-combinations (suc k) (x ∷ xs) =
+    Allₚ.++⁺ (Allₚ.map⁺ $ All.map (cong suc) $ All-length-combinations k xs)
+             (All-length-combinations (suc k) xs)
 
   ∈-length-combinations : ∀ (xs : List A) k ys → xs ∈ combinations k ys → length xs ≡ k
-  ∈-length-combinations xs k ys xs∈combinations[k,ys] = All.lookup (All-length-combinations k ys) xs∈combinations[k,ys]
+  ∈-length-combinations xs k ys xs∈combinations[k,ys] =
+    All.lookup (All-length-combinations k ys) xs∈combinations[k,ys]
 
   combinations-⊆⇒∈ : ∀ {xs ys : List A} → xs ⊆ ys → xs ∈ combinations (length xs) ys
   combinations-⊆⇒∈ {[]}     {ys}     xs⊆ys              = here refl
@@ -85,24 +91,55 @@ module _ {a} {A : Set a} where
     ∈ₚ.∈-++⁺ˡ $ ∈ₚ.∈-map⁺ (x ∷_) $ combinations-⊆⇒∈ xs⊆ys
 
   combinations-∈⇒⊆ : ∀ {xs ys : List A} → xs ∈ combinations (length xs) ys → xs ⊆ ys
-  combinations-∈⇒⊆ {[]}     {ys} xs∈combinations[length[xs],ys] = Lemma.[]⊆xs ys
-  combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} x∷xs∈combinations[length[x∷xs],y∷ys] with ∈ₚ.∈-++⁻ (map (y ∷_) (combinations (length xs) ys)) x∷xs∈combinations[length[x∷xs],y∷ys]
-  ... | inj₁ x∷xs∈map[y∷-][combinations[length[xs],ys]] with ∈ₚ.∈-map⁻ (y ∷_) x∷xs∈map[y∷-][combinations[length[xs],ys]] -- ∷ ∃zs→zs∈combinations[length[xs],ys]×x∷xs≡y∷zs
-  combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} _ | inj₁ _ | zs , (zs∈combinations[length[xs],ys] , x∷xs≡y∷zs) = x≡y ∷ xs⊆ys
+  combinations-∈⇒⊆ {[]}     {ys} xs∈c[len[xs],ys] = Lemma.[]⊆xs ys
+  combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} x∷xs∈c[len[x∷xs],y∷ys]
+    with ∈ₚ.∈-++⁻ (map (y ∷_) (combinations (length xs) ys)) x∷xs∈c[len[x∷xs],y∷ys]
+  ... | inj₁ x∷xs∈map[y∷-][c[len[xs],ys]]
+      with ∈ₚ.∈-map⁻ (y ∷_) x∷xs∈map[y∷-][c[len[xs],ys]] -- ∷ ∃ λ zs → zs ∈ combinations (length xs) ys × x ∷ xs ≡ y ∷ zs
+  combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} _ | inj₁ _
+         | zs , (zs∈c[len[xs],ys] , x∷xs≡y∷zs) = x≡y ∷ xs⊆ys
     where
     xs≡zs : xs ≡ zs
     xs≡zs = Lₚ.∷-injectiveʳ x∷xs≡y∷zs
     x≡y : x ≡ y
     x≡y = Lₚ.∷-injectiveˡ x∷xs≡y∷zs
     xs⊆ys : xs ⊆ ys
-    xs⊆ys = combinations-∈⇒⊆ $ subst (λ v → v ∈ combinations (length xs) ys) (sym xs≡zs) zs∈combinations[length[xs],ys]
-  combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} _ | inj₂ x∷xs∈combinations[length[x∷xs],ys]         = y ∷ʳ x∷xs⊆ys
+    xs⊆ys = combinations-∈⇒⊆ $ subst (λ v → v ∈ combinations (length xs) ys)
+                                      (sym xs≡zs) zs∈c[len[xs],ys]
+  combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} _ | inj₂ x∷xs∈c[len[x∷xs],ys] = y ∷ʳ x∷xs⊆ys
     where
     x∷xs⊆ys : x ∷ xs ⊆ ys
-    x∷xs⊆ys = combinations-∈⇒⊆ x∷xs∈combinations[length[x∷xs],ys]
+    x∷xs⊆ys = combinations-∈⇒⊆ x∷xs∈c[len[x∷xs],ys]
 
-  combinations-⊆⇔∈ : ∀ {xs ys : List A} → xs ⊆ ys ⇔ xs ∈ combinations (length xs) ys
-  combinations-⊆⇔∈ = equivalence combinations-⊆⇒∈ combinations-∈⇒⊆
+  combinations-∈⇔⊆ : ∀ {xs ys : List A} → xs ∈ combinations (length xs) ys ⇔ xs ⊆ ys
+  combinations-∈⇔⊆ = equivalence combinations-∈⇒⊆ combinations-⊆⇒∈
+
+  All-⊆-combinations : ∀ k (xs : List A) → All (_⊆ xs) (combinations k xs)
+  All-⊆-combinations k xs = All.tabulate λ {ys} → λ ys∈combinations[k,xs] →
+    combinations-∈⇒⊆ $ subst (λ v → ys ∈ combinations v xs)
+      (sym $ ∈-length-combinations ys k xs ys∈combinations[k,xs])
+      ys∈combinations[k,xs]
+
+  combinations-∈⇒⊆∧length : ∀ {xs : List A} {k ys} →
+                            xs ∈ combinations k ys → (xs ⊆ ys × length xs ≡ k)
+  combinations-∈⇒⊆∧length {xs} {k} {ys} xs∈c[k,ys] =
+    combinations-∈⇒⊆ xs∈c[len[xs],ys] , length[xs]≡k
+    where
+    length[xs]≡k : length xs ≡ k
+    length[xs]≡k = ∈-length-combinations xs k ys xs∈c[k,ys]
+    xs∈c[len[xs],ys] : xs ∈ combinations (length xs) ys
+    xs∈c[len[xs],ys] =
+      subst (λ v → xs ∈ combinations v ys) (sym length[xs]≡k) xs∈c[k,ys]
+
+  combinations-⊆∧length⇒∈ : ∀ {xs ys : List A} {k} →
+    (xs ⊆ ys × length xs ≡ k) → xs ∈ combinations k ys
+  combinations-⊆∧length⇒∈ {xs} {ys} {k} (xs⊆ys , len[xs]≡k) =
+    subst (λ v → xs ∈ combinations v ys) len[xs]≡k (combinations-⊆⇒∈ xs⊆ys)
+
+  combinations-∈⇔⊆∧length : ∀ {xs : List A} {k} {ys} →
+                            xs ∈ combinations k ys ⇔ (xs ⊆ ys × length xs ≡ k)
+  combinations-∈⇔⊆∧length =
+    equivalence combinations-∈⇒⊆∧length combinations-⊆∧length⇒∈
 
 module _ {a b} {A : Set a} {B : Set b} where
   combinations-map : ∀ k (f : A → B) (xs : List A) →
@@ -120,9 +157,39 @@ module _ {a b} {A : Set a} {B : Set b} where
       ∎
     where open ≡-Reasoning
 
+------------------------------------------------------------------------
+-- Properties of `combinationsWithComplement`
+
+{-
+module _ {a} {A : Set a} where
+  open ≡-Reasoning
+  map-proj₁-combinationsWithComplement : ∀ k (xs : List A) →
+    map proj₁ (combinationsWithComplement k xs) ≡ combinations k xs
+  map-proj₁-combinationsWithComplement 0       xs       = refl
+  map-proj₁-combinationsWithComplement (suc k) []       = refl
+  map-proj₁-combinationsWithComplement (suc k) (x ∷ xs) = begin
+    map proj₁ (map (Prod.map₁ (x ∷_)) (cwc k xs) ++ map (Prod.map₂ (x ∷_)) (cwc (suc k) xs)) ≡⟨ {!sym $ Lₚ.map-++-commute proj₁ (map (Prod.map₁ (x ∷_)) (cwc k xs)) (map (Prod.map₂ (x ∷_)) (cwc (suc k) xs))   !} ⟩
+    map proj₁ (map)
+    map (x ∷_) (comb k xs) ++ comb (suc k) xs ∎
+    where
+    cwc = combinationsWithComplement
+    f = map ∘ Prod.map₁ (x ∷_)
+    comb = combinations
+  -}
+  {-
+  map proj₁
+  (map (Prod.map₁ (_∷_ x)) (combinationsWithComplement k xs) ++
+  map (Prod.map₂ (λ {x = x₁} → _∷_ x))
+  (combinationsWithComplement (suc k) xs))
+  ≡ map (_∷_ x) (combinations k xs) ++ combinations (suc k) xs
+  -}
+
   -- unique-combinations : Unique xs → Unique (combinations k xs)
-  -- All (⊆ xs) (combinations k xs)
-  -- length-permutations : length (permutations xs) ≡ length xs !
-  -- map-proj₁-combinationsWithComplement : map proj₁ (combinationsWithComplement k xs) ≡ combinations k xs
+  -- sorted-combinations : Sorted _<_ xs → Sorted {- Lex._<_ _<_ -} (combinations k xs)
   -- splits₂-defn : splits₂ xs ≡ zip _,_ (inits xs) (tails xs)
   -- length-splits₂ : length (splits₂ xs) ≡ 1 + length xs
+  -- length-splits : length (splits k xs) ≡ C (length xs + k ∸ 1) (length xs)
+  -- length-partitionsAll : length (partitionsAll xs) ≡ B (length xs)
+  -- length-insertEverywhere : length (insertEverywhere x xs) ≡ 1 + length xs
+  -- All-length-insertEverywhere : All (λ ys → length ys ≡ 1 + length xs) (insertEverywhere x xs)
+  -- length-permutations : length (permutations xs) ≡ length xs !
