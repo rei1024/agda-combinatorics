@@ -104,5 +104,21 @@ module _ {a} {A : Set a} where
   combinations-⊆⇔∈ : ∀ {xs ys : List A} → xs ⊆ ys ⇔ xs ∈ combinations (length xs) ys
   combinations-⊆⇔∈ = equivalence combinations-⊆⇒∈ combinations-∈⇒⊆
 
+module _ {a b} {A : Set a} {B : Set b} where
+  combinations-map : ∀ k (f : A → B) (xs : List A) →
+    combinations k (map f xs) ≡ map (map f) (combinations k xs)
+  combinations-map 0       f xs       = refl
+  combinations-map (suc k) f []       = refl
+  combinations-map (suc k) f (x ∷ xs) = begin
+    map (f x ∷_) (combinations k (map f xs)) ++ combinations (suc k) (map f xs)
+      ≡⟨ cong₂ _++_ (cong (map (f x ∷_)) (combinations-map k f xs)) (combinations-map (suc k) f xs) ⟩
+    map (f x ∷_) (map (map f) (combinations k xs)) ++ map (map f) (combinations (suc k) xs)
+      ≡⟨ cong (_++ map (map f) (combinations (suc k) xs)) $ Lemma.lemma₁ f x (combinations k xs) ⟩
+    map (map f) (map (x ∷_) (combinations k xs)) ++ map (map f) (combinations (suc k) xs)
+      ≡⟨ sym $ Lₚ.map-++-commute (map f) (map (x ∷_) (combinations k xs)) (combinations (suc k) xs) ⟩
+    map (map f) (map (x ∷_) (combinations k xs) ++ combinations (suc k) xs)
+      ∎
+    where open ≡-Reasoning
+
   -- unique-combinations : Unique xs → Unique (combinations k xs)
--- All (⊆ xs) (combinations k xs)
+  -- All (⊆ xs) (combinations k xs)
