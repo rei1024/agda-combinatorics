@@ -9,6 +9,8 @@ module Math.Combinatorics.ListFunction.Properties where
 -- stdlib
 open import Data.List
 import Data.List.Properties as Lₚ
+open import Data.List.Relation.Unary.All as All using (All; []; _∷_)
+import Data.List.Relation.Unary.All.Properties as Allₚ
 open import Data.Nat
 open import Function
 open import Relation.Binary.PropositionalEquality
@@ -30,6 +32,12 @@ module _ {a} {A : Set a} where
     1 + length (map (x ∷_) (applyEach f xs)) ≡⟨ cong suc $ Lₚ.length-map (x ∷_) (applyEach f xs ) ⟩
     1 + length (applyEach f xs)              ≡⟨ cong suc $ length-applyEach f xs ⟩
     1 + length xs                            ∎
+
+  All-length-applyEach : ∀ (f : A → A) (xs : List A) →
+                         All (λ ys → length ys ≡ length xs) (applyEach f xs)
+  All-length-applyEach f []       = []
+  All-length-applyEach f (x ∷ xs) =
+    refl ∷ (Allₚ.map⁺ $ All.map (cong suc) $ All-length-applyEach f xs)
 
 ------------------------------------------------------------------------
 -- Properties of `combinations`
@@ -56,4 +64,3 @@ module _ {a} {A : Set a} where
   -- combinations-∈⇒⊆ : xs ∈ combinations (length xs) ys → xs ⊆ ys
   -- combinations-⊆⇔∈ : xs ⊆ ys ⇔ xs ∈ combinations (length xs) ys
   -- unique-combinations : Unique xs → Unique (combinations k xs)
-  
