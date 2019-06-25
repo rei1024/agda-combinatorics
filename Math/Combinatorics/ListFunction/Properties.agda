@@ -78,15 +78,15 @@ module _ {a} {A : Set a} where
   combinations-∈⇒⊆ : ∀ {xs ys : List A} → xs ∈ combinations (length xs) ys → xs ⊆ ys
   combinations-∈⇒⊆ {[]}     {ys} xs∈combinations[length[xs],ys] = Lemma.[]⊆xs ys
   combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} x∷xs∈combinations[length[x∷xs],y∷ys] with ∈ₚ.∈-++⁻ (map (y ∷_) (combinations (length xs) ys)) x∷xs∈combinations[length[x∷xs],y∷ys]
-  ... | inj₁ x∷xs∈map[y∷-][combinations[length[xs],ys]] with ∈ₚ.∈-map⁻ (y ∷_) x∷xs∈map[y∷-][combinations[length[xs],ys]] -- ∷ ∃z→z∈combinations[length[xs],ys]×x∷xs≡y∷z
-  combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} _ | inj₁ _ | z , (z∈combinations[length[xs],ys] , x∷xs≡y∷z) = x≡y ∷ xs⊆ys
+  ... | inj₁ x∷xs∈map[y∷-][combinations[length[xs],ys]] with ∈ₚ.∈-map⁻ (y ∷_) x∷xs∈map[y∷-][combinations[length[xs],ys]] -- ∷ ∃zs→zs∈combinations[length[xs],ys]×x∷xs≡y∷zs
+  combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} _ | inj₁ _ | zs , (zs∈combinations[length[xs],ys] , x∷xs≡y∷zs) = x≡y ∷ xs⊆ys
     where
-    xs≡z : xs ≡ z
-    xs≡z = Lₚ.∷-injectiveʳ x∷xs≡y∷z
+    xs≡zs : xs ≡ zs
+    xs≡zs = Lₚ.∷-injectiveʳ x∷xs≡y∷zs
     x≡y : x ≡ y
-    x≡y = Lₚ.∷-injectiveˡ x∷xs≡y∷z
+    x≡y = Lₚ.∷-injectiveˡ x∷xs≡y∷zs
     xs⊆ys : xs ⊆ ys
-    xs⊆ys = combinations-∈⇒⊆ $ subst (λ v → v ∈ combinations (length xs) ys) (sym xs≡z) z∈combinations[length[xs],ys]
+    xs⊆ys = combinations-∈⇒⊆ $ subst (λ v → v ∈ combinations (length xs) ys) (sym xs≡zs) zs∈combinations[length[xs],ys]
   combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} _ | inj₂ x∷xs∈combinations[length[x∷xs],ys]         = y ∷ʳ x∷xs⊆ys
     where
     x∷xs⊆ys : x ∷ xs ⊆ ys
