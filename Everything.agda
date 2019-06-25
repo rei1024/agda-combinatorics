@@ -13,4 +13,6 @@ import Math.Combinatorics.Function.Properties
 
 import Math.Combinatorics.ListFunction
 
+import Math.Combinatorics.ListFunction.Properties
+
 import Math.Combinatorics.VecFunction
