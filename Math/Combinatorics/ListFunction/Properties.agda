@@ -206,6 +206,7 @@ module _ {a} {A : Set a} where
   -- sorted-combinations : Sorted _<_ xs → Sorted {- Lex._<_ _<_ -} (combinations k xs)
   -- filter-combinations = filter P ∘ combinations k xs
   -- each-disjoint-combinationsWithComplement : Unique zs → (xs , ys) ∈ combinationsWithComplement k zs → Disjoint xs ys
+  -- combinationsWithComplement-∈⇒⊆ : (xs , ys) ∈ combinationsWithComplement (length xs) zs → xs ⊆ zs × ys ⊆ zs
   -- splits₂-defn : splits₂ xs ≡ zip _,_ (inits xs) (tails xs)
   -- length-splits₂ : length (splits₂ xs) ≡ 1 + length xs
   -- length-splits : length (splits k xs) ≡ C (length xs + k ∸ 1) (length xs)

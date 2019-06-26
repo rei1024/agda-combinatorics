@@ -153,7 +153,23 @@ P[n,k]*[n∸k]!≡n! {n} {k} k≤n = begin-equality
 -- proved by P[n,k]*[n∸k]!≡n!
 P[n,k]≡n!/[n∸k]! : ∀ {n k} → k ≤ n → P n k ≡ _div_ (n !) ((n ∸ k) !) {False[n!≟0] (n ∸ k)}
 P[n,k]≡n!/[n∸k]! {n} {k} k≤n = Lemma.m*n≡o⇒m≡o/n (P n k) ((n ∸ k) !) (n !)
-                                 (False[n!≟0] (n ∸ k)) (P[n,k]*[n∸k]!≡n! k≤n)
+                               (False[n!≟0] (n ∸ k)) (P[n,k]*[n∸k]!≡n! k≤n)
+
+P[m,m∸n]*n!≡m! : ∀ {m n} → n ≤ m → P m (m ∸ n) * n ! ≡ m !
+P[m,m∸n]*n!≡m! {m} {n} n≤m = begin-equality
+  P m o * n !       ≡⟨ sym $ cong (λ v → P v o * n !) o+n≡m ⟩
+  P (o + n) o * n ! ≡⟨ P[m+n,m]*n!≡[m+n]! o n ⟩
+  (o + n) !         ≡⟨ cong (_!) o+n≡m ⟩
+  m !               ∎
+  where
+  o = m ∸ n
+  o+n≡m : o + n ≡ m
+  o+n≡m = m∸n+n≡m n≤m
+
+m!/n!≡P[m,m∸n] : ∀ {m n} → n ≤ m → (m ! / n !) {False[n!≟0] n} ≡ P m (m ∸ n)
+m!/n!≡P[m,m∸n] {m} {n} n≤m =
+  sym $ Lemma.m≡n*o⇒n≡m/o (m !) (P m (m ∸ n)) (n !) (False[n!≟0] n)
+                          (sym $ P[m,m∸n]*n!≡m! n≤m)
 
 -- proved by P-split
 -- m = 2; n = 7

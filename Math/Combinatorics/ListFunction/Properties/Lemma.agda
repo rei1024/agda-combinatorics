@@ -37,9 +37,3 @@ module _ {a b} {A : Set a} {B : Set b} where
 
   proj₁′ : A × B → A
   proj₁′ = proj₁
-
-  {-
-  map₂ : ∀ {a b c} {A : Set a} {B : A → Set b} {C : A → Set c} →
-         (∀ {x} → B x → C x) → Σ A B → Σ A C
-  map₂ f = map id f
-  -}

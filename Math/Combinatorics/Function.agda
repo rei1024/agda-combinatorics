@@ -102,8 +102,7 @@ L n               0             = 0
 L 0               (suc k)       = 0
 L 1               1             = 1
 L 1               (suc (suc k)) = 0
-L (suc n@(suc _)) (suc k)       =
-  (n + suc k) * L n (suc k) + L n k
+L (suc n@(suc _)) (suc k)       = (n + suc k) * L n (suc k) + L n k
 
 ------------------------------------------------------------------------
 -- Bell number
