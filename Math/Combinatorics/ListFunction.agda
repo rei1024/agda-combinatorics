@@ -17,7 +17,7 @@ module _ {a} {A : Set a} where
   -- applyEach (_+ 10) (upTo 3)
   -- >>> (10 ∷ 1 ∷ 2 ∷ []) ∷ (0 ∷ 11 ∷ 2 ∷ []) ∷ (0 ∷ 1 ∷ 12 ∷ []) ∷ []
   applyEach : (A → A) → List A → List (List A)
-  applyEach f [] = []
+  applyEach f []       = []
   applyEach f (x ∷ xs) = (f x ∷ xs) ∷ map (x ∷_) (applyEach f xs)
 
 module _ {a} {A : Set a} where

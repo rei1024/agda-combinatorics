@@ -16,7 +16,6 @@ open import Data.Unit using (tt)
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary using (yes; no; ¬_)
 open import Relation.Nullary.Decidable using (False; fromWitnessFalse)
-open import Relation.Unary as U
 
 open CommutativeMonoidOperations +-0-commutativeMonoid
 

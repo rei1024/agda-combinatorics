@@ -91,7 +91,7 @@ module _ {a} {A : Set a} where
     ∈ₚ.∈-++⁺ˡ $ ∈ₚ.∈-map⁺ (x ∷_) $ combinations-⊆⇒∈ xs⊆ys
 
   combinations-∈⇒⊆ : ∀ {xs ys : List A} → xs ∈ combinations (length xs) ys → xs ⊆ ys
-  combinations-∈⇒⊆ {[]}     {ys} xs∈c[len[xs],ys] = Lemma.[]⊆xs ys
+  combinations-∈⇒⊆ {[]}     {ys}     _                       = Lemma.[]⊆xs ys
   combinations-∈⇒⊆ {x ∷ xs} {y ∷ ys} x∷xs∈c[len[x∷xs],y∷ys]
     with ∈ₚ.∈-++⁻ (map (y ∷_) (combinations (length xs) ys)) x∷xs∈c[len[x∷xs],y∷ys]
   ... | inj₁ x∷xs∈map[y∷-][c[len[xs],ys]]
@@ -115,7 +115,7 @@ module _ {a} {A : Set a} where
   combinations-∈⇔⊆ = equivalence combinations-∈⇒⊆ combinations-⊆⇒∈
 
   All-⊆-combinations : ∀ k (xs : List A) → All (_⊆ xs) (combinations k xs)
-  All-⊆-combinations k xs = All.tabulate λ {ys} → λ ys∈combinations[k,xs] →
+  All-⊆-combinations k xs = All.tabulate λ {ys} ys∈combinations[k,xs] →
     combinations-∈⇒⊆ $ subst (λ v → ys ∈ combinations v xs)
       (sym $ ∈-length-combinations ys k xs ys∈combinations[k,xs])
       ys∈combinations[k,xs]

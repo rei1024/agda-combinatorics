@@ -53,7 +53,7 @@ module _ {a} {A : Set a} where
     where
     f : Vec (List A) (suc k) → List (Vec (List A) (suc (suc k)))
     f (ys ∷ yss) =
-      map (λ { (as , bs) → as ∷ bs ∷ yss }) (NE.toList (ListFun.splits₂ ys))
+      map (λ { (as , bs) → as ∷ bs ∷ yss }) (ListFun.splits₂ ys)
 
   splits⁺₂ : ∀ {n} → Vec A (1 + n) → Vec (List⁺ A × List⁺ A) n
   splits⁺₂ (x ∷ [])     = []
