@@ -117,10 +117,10 @@ lemma₃ .(suc (n + k)) n              | greater .n k = inj₂ (s≤s (≤-steps
   ∎
 
 m≡n*o⇒n≡m/o : ∀ m n o → (wit : False (o ≟ 0)) → m ≡ n * o → n ≡ _div_ m o {wit}
-m≡n*o⇒n≡m/o m n (suc o) tt m≡n*[1+o] = sym $ begin-equality
-  m div suc o           ≡⟨ cong (_div suc o) $ m≡n*[1+o] ⟩
-  (n * suc o) div suc o ≡⟨ [m*n]/n≡n n o ⟩
-  n                     ∎
+m≡n*o⇒n≡m/o m n o@(suc o-1) tt m≡n*o = sym $ begin-equality
+  m div o       ≡⟨ cong (_div o) $ m≡n*o ⟩
+  (n * o) div o ≡⟨ [m*n]/n≡n n o-1 ⟩
+  n             ∎
 
 m*n≡o⇒m≡o/n : ∀ m n o → (wit : False (n ≟ 0)) → m * n ≡ o → m ≡ _div_ o n {wit}
 m*n≡o⇒m≡o/n m n o wit m*n≡o = m≡n*o⇒n≡m/o o m n wit (sym m*n≡o)

@@ -33,6 +33,7 @@ import Math.Combinatorics.ListFunction.Properties.Lemma as Lemma
 
 module _ {a} {A : Set a} where
   open ≡-Reasoning
+
   length-applyEach : ∀ (f : A → A) (xs : List A) →
                      length (applyEach f xs) ≡ length xs
   length-applyEach f []       = refl
@@ -55,6 +56,7 @@ module _ {a} {A : Set a} where
 
 module _ {a} {A : Set a} where
   open ≡-Reasoning
+
   length-combinations : ∀ (k : ℕ) (xs : List A) →
                         length (combinations k xs) ≡ C (length xs) k
   length-combinations 0       xs       = refl
@@ -162,6 +164,7 @@ module _ {a b} {A : Set a} {B : Set b} where
 
 module _ {a} {A : Set a} where
   open ≡-Reasoning
+
   map-proj₁-combinationsWithComplement : ∀ k (xs : List A) →
     map proj₁ (combinationsWithComplement k xs) ≡ combinations k xs
   map-proj₁-combinationsWithComplement 0       xs       = refl
@@ -202,13 +205,86 @@ module _ {a} {A : Set a} where
     C (length xs) k
       ∎
 
+------------------------------------------------------------------------
+-- Properties of `splits₂`
+
+module _ {a} {A : Set a} where
+  open ≡-Reasoning
+  open Prod using (map₁; map₂)
+
+  length-splits₂ : ∀ (xs : List A) → length (splits₂ xs) ≡ 1 + length xs
+  length-splits₂ []       = refl
+  length-splits₂ (x ∷ xs) = begin
+    1 + length (map (map₁ (x ∷_)) (splits₂ xs))
+      ≡⟨ cong (1 +_) $ Lₚ.length-map (map₁ (x ∷_)) (splits₂ xs) ⟩
+    1 + length (splits₂ xs)
+      ≡⟨ cong (1 +_) $ length-splits₂ xs ⟩
+    1 + length (x ∷ xs)
+      ∎
+
+  splits₂-defn : ∀ (xs : List A) → splits₂ xs ≡ zip (inits xs) (tails xs)
+  splits₂-defn []       = refl
+  splits₂-defn (x ∷ xs) = begin
+    splits₂ (x ∷ xs) ≡⟨⟩
+    ([] , x ∷ xs) ∷ map (map₁ (x ∷_)) (splits₂ xs)
+      ≡⟨ cong (([] , x ∷ xs) ∷_) (begin
+        map (map₁ (x ∷_)) (splits₂ xs)
+          ≡⟨ cong (map (map₁ (x ∷_))) $ splits₂-defn xs ⟩
+        map (map₁ (x ∷_)) (zip is ts)
+          ≡⟨ Lₚ.map-zipWith _,_ (map₁ (x ∷_)) is ts ⟩
+        zipWith (λ ys zs → map₁ (x ∷_) (ys , zs)) is ts
+          ≡⟨ sym $ Lₚ.zipWith-map _,_ (x ∷_) id is ts ⟩
+        zip (map (x ∷_) is) (map id ts)
+          ≡⟨ cong (zip (map (x ∷_) is)) $ Lₚ.map-id ts ⟩
+        zip (map (x ∷_) is) ts
+          ∎) ⟩
+    ([] , x ∷ xs) ∷ zip (map (x ∷_) is) ts
+      ∎
+    where
+    is = inits xs
+    ts = tails xs
+
+  All-++-splits₂ : (xs : List A) →
+    All (Prod.uncurry (λ ys zs → ys ++ zs ≡ xs)) (splits₂ xs)
+  All-++-splits₂ []       = refl ∷ []
+  All-++-splits₂ (x ∷ xs) =
+    All._∷_ refl $ Allₚ.map⁺ $ All.map (cong (x ∷_)) $ All-++-splits₂ xs
+
+  splits₂-∈⇒++ : {xs ys zs : List A} → (ys , zs) ∈ splits₂ xs → ys ++ zs ≡ xs
+  splits₂-∈⇒++ {xs = xs} = All.lookup (All-++-splits₂ xs)
+
+  private
+    [],xs∈splits₂[xs] : (xs : List A) → ([] , xs) ∈ splits₂ xs
+    [],xs∈splits₂[xs] []       = here refl
+    [],xs∈splits₂[xs] (x ∷ xs) = here refl
+
+  ∈-split₂-++ : (xs ys : List A) → (xs , ys) ∈ splits₂ (xs ++ ys)
+  ∈-split₂-++ []       ys = [],xs∈splits₂[xs] ys
+  ∈-split₂-++ (x ∷ xs) ys =
+    Any.there $ ∈ₚ.∈-map⁺ (map₁ (x ∷_)) $ ∈-split₂-++ xs ys
+
+  splits₂-++⇒∈ : {xs ys zs : List A} → xs ++ ys ≡ zs → (xs , ys) ∈ splits₂ zs
+  splits₂-++⇒∈ {xs} {ys} {zs} xs++ys≡zs =
+    subst (λ v → (xs , ys) ∈ splits₂ v) xs++ys≡zs (∈-split₂-++ xs ys)
+
+  splits₂-∈⇔++ : {xs ys zs : List A} → (xs , ys) ∈ splits₂ zs ⇔ xs ++ ys ≡ zs
+  splits₂-∈⇔++ = equivalence splits₂-∈⇒++ splits₂-++⇒∈
+
+module _ {a b} {A : Set a} {B : Set b} where
+  open ≡-Reasoning
+
+  {-
+  splits₂-map : ∀ (f : A → B) (xs : List A) →
+    splits₂ (map f xs) ≡ map (Prod.map (map f) (map f)) (splits₂ xs)
+  splits₂-map f []       = refl
+  splits₂-map f (x ∷ xs) = {!   !}
+  -}
+
   -- unique-combinations : Unique xs → Unique (combinations k xs)
   -- sorted-combinations : Sorted _<_ xs → Sorted {- Lex._<_ _<_ -} (combinations k xs)
   -- filter-combinations = filter P ∘ combinations k xs
   -- each-disjoint-combinationsWithComplement : Unique zs → (xs , ys) ∈ combinationsWithComplement k zs → Disjoint xs ys
   -- combinationsWithComplement-∈⇒⊆ : (xs , ys) ∈ combinationsWithComplement (length xs) zs → xs ⊆ zs × ys ⊆ zs
-  -- splits₂-defn : splits₂ xs ≡ zip _,_ (inits xs) (tails xs)
-  -- length-splits₂ : length (splits₂ xs) ≡ 1 + length xs
   -- length-splits : length (splits k xs) ≡ C (length xs + k ∸ 1) (length xs)
   -- length-partitionsAll : length (partitionsAll xs) ≡ B (length xs)
   -- length-insertEverywhere : length (insertEverywhere x xs) ≡ 1 + length xs
