@@ -160,7 +160,6 @@ module _ {a b} {A : Set a} {B : Set b} where
 ------------------------------------------------------------------------
 -- Properties of `combinationsWithComplement`
 
-{-
 module _ {a} {A : Set a} where
   open ≡-Reasoning
   map-proj₁-combinationsWithComplement : ∀ k (xs : List A) →
@@ -168,24 +167,45 @@ module _ {a} {A : Set a} where
   map-proj₁-combinationsWithComplement 0       xs       = refl
   map-proj₁-combinationsWithComplement (suc k) []       = refl
   map-proj₁-combinationsWithComplement (suc k) (x ∷ xs) = begin
-    map proj₁ (map (Prod.map₁ (x ∷_)) (cwc k xs) ++ map (Prod.map₂ (x ∷_)) (cwc (suc k) xs)) ≡⟨ {!sym $ Lₚ.map-++-commute proj₁ (map (Prod.map₁ (x ∷_)) (cwc k xs)) (map (Prod.map₂ (x ∷_)) (cwc (suc k) xs))   !} ⟩
-    map proj₁ (map)
-    map (x ∷_) (comb k xs) ++ comb (suc k) xs ∎
+    map proj₁ (map f ys ++ map g zs)
+      ≡⟨ Lₚ.map-++-commute proj₁ (map f ys) (map g zs) ⟩
+    map proj₁ (map f ys) ++ map proj₁ (map g zs)
+      ≡⟨ sym $ Lₚ.map-compose ys ⟨ cong₂ _++_ ⟩ Lₚ.map-compose zs ⟩
+    map (proj₁ ∘′ f) ys ++ map (λ v → proj₁ (g v)) zs
+      ≡⟨ Lₚ.map-cong lemma₁ ys ⟨ cong₂ _++_ ⟩ Lₚ.map-cong lemma₂ zs ⟩
+    map ((x ∷_) ∘′ proj₁) ys ++ map proj₁ zs
+      ≡⟨ cong (_++ map proj₁ zs) $ Lₚ.map-compose ys ⟩
+    map (x ∷_) (map proj₁ ys) ++ map proj₁ zs
+      ≡⟨ cong (map (x ∷_)) (map-proj₁-combinationsWithComplement k xs) ⟨ cong₂ _++_ ⟩ map-proj₁-combinationsWithComplement (suc k) xs ⟩
+    map (x ∷_) (combinations k xs) ++ combinations (suc k) xs
+      ∎
     where
-    cwc = combinationsWithComplement
-    f = map ∘ Prod.map₁ (x ∷_)
-    comb = combinations
-  -}
-  {-
-  map proj₁
-  (map (Prod.map₁ (_∷_ x)) (combinationsWithComplement k xs) ++
-  map (Prod.map₂ (λ {x = x₁} → _∷_ x))
-  (combinationsWithComplement (suc k) xs))
-  ≡ map (_∷_ x) (combinations k xs) ++ combinations (suc k) xs
-  -}
+    ys = combinationsWithComplement k xs
+    zs = combinationsWithComplement (suc k) xs
+    f g : List A × List A → List A × List A
+    f = Prod.map₁ (x ∷_)
+    g = Prod.map₂ (x ∷_)
+    lemma₁ : ∀ (t : List A × List A) → proj₁ (Prod.map₁ (x ∷_) t) ≡ x ∷ proj₁ t
+    lemma₁ t = Lemma.proj₁-map₁ (x ∷_) t
+    lemma₂ : ∀ (t : List A × List A) → Lemma.proj₁′ {_} {_} {_} {List A} (Prod.map₂ (x ∷_) t) ≡ proj₁ t
+    lemma₂ t = Lemma.proj₁-map₂ (x ∷_) t
+
+  length-combinationsWithComplement : ∀ k (xs : List A) →
+    length (combinationsWithComplement k xs) ≡ C (length xs) k
+  length-combinationsWithComplement k xs = begin
+    length (combinationsWithComplement k xs)
+      ≡⟨ sym $ Lₚ.length-map proj₁ (combinationsWithComplement k xs) ⟩
+    length (map proj₁ (combinationsWithComplement k xs))
+      ≡⟨ cong length $ map-proj₁-combinationsWithComplement k xs ⟩
+    length (combinations k xs)
+      ≡⟨ length-combinations k xs ⟩
+    C (length xs) k
+      ∎
 
   -- unique-combinations : Unique xs → Unique (combinations k xs)
   -- sorted-combinations : Sorted _<_ xs → Sorted {- Lex._<_ _<_ -} (combinations k xs)
+  -- filter-combinations = filter P ∘ combinations k xs
+  -- each-disjoint-combinationsWithComplement : Unique zs → (xs , ys) ∈ combinationsWithComplement k zs → Disjoint xs ys
   -- splits₂-defn : splits₂ xs ≡ zip _,_ (inits xs) (tails xs)
   -- length-splits₂ : length (splits₂ xs) ≡ 1 + length xs
   -- length-splits : length (splits k xs) ≡ C (length xs + k ∸ 1) (length xs)
