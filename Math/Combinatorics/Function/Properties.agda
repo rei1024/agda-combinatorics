@@ -404,10 +404,9 @@ CRec[n,k]≡P[n,k]/k! n k = Lemma.m*n≡o⇒m≡o/n _ _ _ (False[n!≟0] k) (CRe
 C≡CRec : ∀ n k → C n k ≡ CRec n k
 C≡CRec n k = sym $ CRec[n,k]≡P[n,k]/k! n k
 
--- TODO use stdlib's n/1≡n
 C[n,0]≡1 : ∀ n → C n 0 ≡ 1
 C[n,0]≡1 n = begin-equality
-  P n 0 div 1 ≡⟨ Lemma.n/1≡n (P n 0) ⟩
+  P n 0 div 1 ≡⟨ n/1≡n (P n 0) ⟩
   P n 0       ∎
 
 C[0,1+k]≡0 : ∀ k → C 0 (suc k) ≡ 0
@@ -427,7 +426,7 @@ n<k⇒C[n,k]≡0 {n} {k} n<k = begin-equality
 
 C[n,1]≡n : ∀ n → C n 1 ≡ n
 C[n,1]≡n n = begin-equality
-  P n 1 div 1 ≡⟨ Lemma.n/1≡n (P n 1) ⟩
+  P n 1 div 1 ≡⟨ n/1≡n (P n 1) ⟩
   P n 1       ≡⟨ P[n,1]≡n n ⟩
   n           ∎
 

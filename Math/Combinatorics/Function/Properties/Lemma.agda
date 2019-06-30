@@ -8,8 +8,6 @@ open import Data.Sum
 open import Data.Nat
 open import Data.Nat.Properties
 open import Data.Nat.DivMod
-open import Agda.Builtin.Nat using ()
-  renaming (div-helper to divₕ; mod-helper to modₕ)
 open import Data.Nat.Solver using (module +-*-Solver)
 open import Relation.Binary
 open import Relation.Binary.PropositionalEquality
@@ -19,16 +17,6 @@ open import Function
 open import Algebra.FunctionProperties
 
 open ≤-Reasoning
-
--- TODO from stdlib
-private
-  a[divₕ]1≡a : ∀ acc a → divₕ acc 0 a 0 ≡ acc + a
-  a[divₕ]1≡a acc zero    = sym (+-identityʳ acc)
-  a[divₕ]1≡a acc (suc a) = trans (a[divₕ]1≡a (suc acc) a) (sym (+-suc acc a))
-
--- TODO stdlib give wrong name
-n/1≡n : ∀ n → n div 1 ≡ n
-n/1≡n a = a[divₕ]1≡a 0 a
 
 m<n⇒n∸m≢0 : ∀ {m n} → m < n → n ∸ m ≢ 0
 m<n⇒n∸m≢0 {m} {n} m<n n∸m≡0 = (λ x → x (sym n∸m≡0)) $ <⇒≢ $ +-cancelʳ-< 0 (n ∸ m) $ begin-strict
@@ -106,23 +94,13 @@ lemma₃ m              .(suc (m + k)) | less    .m k = inj₁ (suc k , cong suc
 lemma₃ m              .m             | equal   .m   = inj₁ (0 , +-identityˡ m)
 lemma₃ .(suc (n + k)) n              | greater .n k = inj₂ (s≤s (≤-stepsʳ k ≤-refl))
 
--- TODO from stdlib
-[m*n]/n≡n : ∀ m n → (m * suc n) div suc n ≡ m
-[m*n]/n≡n m n = sym $ *-cancelʳ-≡ m ((m * suc n) div (suc n)) {n} $ begin-equality
-    m * suc n
-  ≡⟨ a≡a%n+[a/n]*n (m * suc n) n ⟩
-    (m * suc n) % suc n + ((m * suc n) div suc n) * suc n
-  ≡⟨ cong (_+ ((m * suc n) div suc n) * suc n) $ kn%n≡0 m n ⟩
-    ((m * suc n) div suc n) * suc n
-  ∎
-
-m≡n*o⇒n≡m/o : ∀ m n o → (wit : False (o ≟ 0)) → m ≡ n * o → n ≡ _div_ m o {wit}
+m≡n*o⇒n≡m/o : ∀ m n o → (wit : False (o ≟ 0)) → m ≡ n * o → n ≡ _/_ m o {wit}
 m≡n*o⇒n≡m/o m n o@(suc o-1) tt m≡n*o = sym $ begin-equality
-  m div o       ≡⟨ cong (_div o) $ m≡n*o ⟩
-  (n * o) div o ≡⟨ [m*n]/n≡n n o-1 ⟩
-  n             ∎
+  m / o       ≡⟨ cong (_/ o) $ m≡n*o ⟩
+  (n * o) / o ≡⟨ m*n/n≡m n o ⟩
+  n            ∎
 
-m*n≡o⇒m≡o/n : ∀ m n o → (wit : False (n ≟ 0)) → m * n ≡ o → m ≡ _div_ o n {wit}
+m*n≡o⇒m≡o/n : ∀ m n o → (wit : False (n ≟ 0)) → m * n ≡ o → m ≡ _/_ o n {wit}
 m*n≡o⇒m≡o/n m n o wit m*n≡o = m≡n*o⇒n≡m/o o m n wit (sym m*n≡o)
 
 *-pres-≢0 : ∀ {a b} → a ≢ 0 → b ≢ 0 → a * b ≢ 0

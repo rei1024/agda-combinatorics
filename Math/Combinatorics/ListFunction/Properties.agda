@@ -6,7 +6,7 @@
 
 module Math.Combinatorics.ListFunction.Properties where
 
--- stdlib
+-- agda-stdlib
 open import Data.List hiding (_∷ʳ_)
 import Data.List.Properties as Lₚ
 open import Data.List.Membership.Propositional using (_∈_)
@@ -280,7 +280,9 @@ module _ {a b} {A : Set a} {B : Set b} where
   splits₂-map f (x ∷ xs) = {!   !}
   -}
 
-  -- unique-combinations : Unique xs → Unique (combinations k xs)
+  -- unique-combinations : Unique _≡_ xs → Unique _≡_ (combinations k xs)
+  -- unique-combinations-PW : Unique _≈_ xs → Unique (Pointwise _≈_) (combinations k xs)
+  -- unique-combinations-SetEquality : Unique _≡_ xs → Unique (_-[ set ]_) (combinations k xs)
   -- sorted-combinations : Sorted _<_ xs → Sorted {- Lex._<_ _<_ -} (combinations k xs)
   -- filter-combinations = filter P ∘ combinations k xs
   -- each-disjoint-combinationsWithComplement : Unique zs → (xs , ys) ∈ combinationsWithComplement k zs → Disjoint xs ys

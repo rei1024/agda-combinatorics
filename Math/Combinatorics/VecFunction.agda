@@ -6,6 +6,7 @@
 
 module Math.Combinatorics.VecFunction where
 
+-- agda-stdlib
 open import Data.List
 open import Data.List.NonEmpty as NE using (List⁺)
 open import Data.Nat
@@ -15,6 +16,7 @@ open import Data.Vec as Vec using (Vec; []; _∷_)
 open import Function
 open import Relation.Binary.PropositionalEquality hiding ([_])
 
+-- agda-combinatorics
 import Math.Combinatorics.ListFunction as ListFun
 
 module _ {a} {A : Set a} where
