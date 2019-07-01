@@ -7,6 +7,7 @@
 module Math.Combinatorics.Function.Properties where
 
 -- stdlib
+
 open import Data.Empty using (⊥-elim)
 open import Data.List
 open import Data.Maybe

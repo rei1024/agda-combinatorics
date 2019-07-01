@@ -7,6 +7,8 @@
 
 module Everything where
 
+import Math.BinomialTheorem
+
 import Math.Combinatorics.Function
 
 import Math.Combinatorics.Function.Properties

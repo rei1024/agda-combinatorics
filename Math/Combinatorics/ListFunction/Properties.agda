@@ -11,6 +11,7 @@ open import Data.List hiding (_∷ʳ_)
 import Data.List.Properties as Lₚ
 open import Data.List.Membership.Propositional using (_∈_; _∉_)
 import Data.List.Membership.Propositional.Properties as ∈ₚ
+open import Data.List.Relation.Binary.BagAndSetEquality
 open import Data.List.Relation.Binary.Sublist.Propositional using (_⊆_; []; _∷_; _∷ʳ_)
 import Data.List.Relation.Binary.Sublist.Propositional.Properties as Sublistₚ
 open import Data.List.Relation.Unary.All as All using (All; []; _∷_)
@@ -26,7 +27,7 @@ open import Data.Product as Prod using (_×_; _,_; ∃; proj₁; proj₂)
 open import Data.Sum using (inj₁; inj₂)
 open import Function
 open import Function.Equivalence using (_⇔_; equivalence)
-open import Relation.Binary.PropositionalEquality
+open import Relation.Binary.PropositionalEquality as P
 
 -- agda-combinatorics
 open import Math.Combinatorics.Function
@@ -173,6 +174,19 @@ module _ {a} {A : Set a} where
         x∉vs : x ∉ vs
         x∉vs = Allₚ.All¬⇒¬Any All[x≢-]vs
       in x∉vs x∈vs
+  {-
+  --   unique⇒drop-cons-set : ∀ {a} {A : Set a} {x : A} {xs ys} →
+  unique-combinations-set : ∀ k {xs : List A} →
+    UniqueP.Unique xs → UniqueS.Unique ([ set ]-Equality A) (combinations k xs)
+  unique-combinations-set 0                xs-unique          = [] ∷ []
+  unique-combinations-set (suc k) {[]}     xs-unique          = []
+  unique-combinations-set (suc k) {x ∷ xs} (this ∷ xs-unique) =
+    UniqueSₚ.++⁺ ([ set ]-Equality A)
+      (UniqueSₚ.map⁺ ([ set ]-Equality A) ([ set ]-Equality A) (λ → {!   !}) (unique-combinations-set k {xs} xs-unique))
+      (unique-combinations-set (suc k) {xs} xs-unique)
+      {!   !}
+  -- {- x∉xs -} Unique -[ set ] xs → Unique -[ set ] (x ∷ xs)
+  -}
 
 module _ {a b} {A : Set a} {B : Set b} where
   combinations-map : ∀ k (f : A → B) (xs : List A) →
@@ -310,7 +324,9 @@ module _ {a b} {A : Set a} {B : Set b} where
   splits₂-map f []       = refl
   splits₂-map f (x ∷ xs) = {!   !}
   -}
-
+  -- length[xs]<k⇒combinations[k,xs]≡[]
+  -- All-unique-combinations : UniqueP.Unique xs → All (UniqueP.Unique) (combinations k xs)
+  -- All-unique-combinations-set : UniqueP.Unique xs → All (UniqueS.Unique [ set ]-Equality A) (combinations k xs)
   -- unique-combinations-PW : UniqueS.Unique S xs → UniqueS.Unique (Equality S) (combinations k xs)
   -- unique-combinations-set : UniqueP.Unique xs → Unique (_-[ set ]_) (combinations k xs)
   -- sorted-combinations : Sorted _<_ xs → Sorted {- Lex._<_ _<_ -} (combinations k xs)
