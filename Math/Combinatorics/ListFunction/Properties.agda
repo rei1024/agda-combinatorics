@@ -9,12 +9,18 @@ module Math.Combinatorics.ListFunction.Properties where
 -- agda-stdlib
 open import Data.List hiding (_∷ʳ_)
 import Data.List.Properties as Lₚ
-open import Data.List.Membership.Propositional using (_∈_)
+open import Data.List.Membership.Propositional using (_∈_; _∉_)
 import Data.List.Membership.Propositional.Properties as ∈ₚ
 open import Data.List.Relation.Binary.Sublist.Propositional using (_⊆_; []; _∷_; _∷ʳ_)
+import Data.List.Relation.Binary.Sublist.Propositional.Properties as Sublistₚ
 open import Data.List.Relation.Unary.All as All using (All; []; _∷_)
 import Data.List.Relation.Unary.All.Properties as Allₚ
+open import Data.List.Relation.Unary.AllPairs using (AllPairs; []; _∷_)
 open import Data.List.Relation.Unary.Any as Any using (Any; here; there)
+import Data.List.Relation.Unary.Unique.Propositional as UniqueP
+import Data.List.Relation.Unary.Unique.Propositional.Properties as UniquePₚ
+import Data.List.Relation.Unary.Unique.Setoid as UniqueS
+import Data.List.Relation.Unary.Unique.Setoid.Properties as UniqueSₚ
 open import Data.Nat
 open import Data.Product as Prod using (_×_; _,_; ∃; proj₁; proj₂)
 open import Data.Sum using (inj₁; inj₂)
@@ -142,6 +148,31 @@ module _ {a} {A : Set a} where
                             xs ∈ combinations k ys ⇔ (xs ⊆ ys × length xs ≡ k)
   combinations-∈⇔⊆∧length =
     equivalence combinations-∈⇒⊆∧length combinations-⊆∧length⇒∈
+
+  unique-combinations : ∀ k {xs : List A} →
+    UniqueP.Unique xs → UniqueP.Unique (combinations k xs)
+  unique-combinations 0      {xs}      xs-unique                = [] ∷ []
+  unique-combinations (suc k) {[]}     xs-unique                = []
+  unique-combinations (suc k) {x ∷ xs} (All[x≢-]xs ∷ xs-unique) =
+    UniquePₚ.++⁺ {_} {_} {map (x ∷_) (combinations k xs)} {combinations (suc k) xs}
+      (UniquePₚ.map⁺ Lₚ.∷-injectiveʳ (unique-combinations k {xs} xs-unique))
+      (unique-combinations (suc k) {xs} xs-unique)
+      λ {vs} vs∈map[x∷-]c[k,xs]×vs∈c[1+k,xs] → let
+        vs∈map[x∷-]c[k,xs] = proj₁ vs∈map[x∷-]c[k,xs]×vs∈c[1+k,xs]
+        vs∈c[1+k,xs] = proj₂ vs∈map[x∷-]c[k,xs]×vs∈c[1+k,xs]
+        proof = ∈ₚ.∈-map⁻ (x ∷_) vs∈map[x∷-]c[k,xs]
+        us = proj₁ proof
+        vs≡x∷us : vs ≡ x ∷ us
+        vs≡x∷us = proj₂ (proj₂ proof)
+        x∈vs : x ∈ vs
+        x∈vs = subst (x ∈_) (sym vs≡x∷us) (here refl)
+        vs⊆xs : vs ⊆ xs
+        vs⊆xs = proj₁ $ combinations-∈⇒⊆∧length {vs} {suc k} {xs} vs∈c[1+k,xs]
+        All[x≢-]vs : All (x ≢_) vs
+        All[x≢-]vs = Sublistₚ.All-resp-⊆ vs⊆xs All[x≢-]xs
+        x∉vs : x ∉ vs
+        x∉vs = Allₚ.All¬⇒¬Any All[x≢-]vs
+      in x∉vs x∈vs
 
 module _ {a b} {A : Set a} {B : Set b} where
   combinations-map : ∀ k (f : A → B) (xs : List A) →
@@ -280,9 +311,8 @@ module _ {a b} {A : Set a} {B : Set b} where
   splits₂-map f (x ∷ xs) = {!   !}
   -}
 
-  -- unique-combinations : Unique _≡_ xs → Unique _≡_ (combinations k xs)
-  -- unique-combinations-PW : Unique _≈_ xs → Unique (Pointwise _≈_) (combinations k xs)
-  -- unique-combinations-SetEquality : Unique _≡_ xs → Unique (_-[ set ]_) (combinations k xs)
+  -- unique-combinations-PW : UniqueS.Unique S xs → UniqueS.Unique (Equality S) (combinations k xs)
+  -- unique-combinations-set : UniqueP.Unique xs → Unique (_-[ set ]_) (combinations k xs)
   -- sorted-combinations : Sorted _<_ xs → Sorted {- Lex._<_ _<_ -} (combinations k xs)
   -- filter-combinations = filter P ∘ combinations k xs
   -- each-disjoint-combinationsWithComplement : Unique zs → (xs , ys) ∈ combinationsWithComplement k zs → Disjoint xs ys
