@@ -84,7 +84,7 @@ n!≤n^n (suc n) = begin
   suc (suc n) * (suc n) ! ≡⟨⟩
   (suc (suc n)) !         ∎
 
-[1+n]!/[1+n]≡n! : ∀ n → (suc n) ! div (suc n) ≡ n !
+[1+n]!/[1+n]≡n! : ∀ n → (suc n) ! / suc n ≡ n !
 [1+n]!/[1+n]≡n! n =
   sym $ Lemma.m*n≡o⇒m≡o/n (n !) (suc n) ((suc n) !) tt (*-comm (n !) (suc n))
 
@@ -230,8 +230,8 @@ P[1+n,1+k]≡[1+k]*P[n,k]+P[n,1+k] n k with k ≤? n
   n<k : n < k
   n<k = ≰⇒> k≰n
 
-P[1+n,n]≡n! : ∀ n → P (suc n) n ≡ (suc n) !
-P[1+n,n]≡n! n = begin-equality
+P[1+n,n]≡[1+n]! : ∀ n → P (suc n) n ≡ (suc n) !
+P[1+n,n]≡[1+n]! n = begin-equality
   P (1 + n) n       ≡⟨ cong (λ v → P v n) (+-comm 1 n) ⟩
   P (n + 1) n       ≡⟨ sym $ *-identityʳ (P (n + 1) n) ⟩
   P (n + 1) n * 1   ≡⟨ sym $ P-split n 1 1 ⟩
