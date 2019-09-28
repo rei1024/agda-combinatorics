@@ -763,6 +763,24 @@ Poch-split m (suc n) o = begin-equality
   m * Poch (suc m) n * Poch (suc m + n) o   ≡⟨ cong (λ v → m * Poch (suc m) n * Poch v o) $ sym $ +-suc m n ⟩
   m * Poch (suc m) n * Poch (m + suc n) o   ∎
 
+o≤n⇒Poch[m,n]≡Poch[m+o,n∸o]*Poch[m,o] :
+  ∀ m {n o} → o ≤ n → Poch m n ≡ Poch (m + o) (n ∸ o) * Poch m o
+o≤n⇒Poch[m,n]≡Poch[m+o,n∸o]*Poch[m,o] m {n} {o} o≤n = begin-equality
+  Poch m n                  ≡⟨ cong (Poch m) n≡o+p ⟩
+  Poch m (o + p)            ≡⟨ Poch-split m o p ⟩
+  Poch m o * Poch (m + o) p ≡⟨ *-comm (Poch m o) (Poch (m + o) p) ⟩
+  Poch (m + o) p * Poch m o ∎
+  where
+  p = n ∸ o
+  n≡o+p : n ≡ o + (n ∸ o)
+  n≡o+p = trans (sym $ m∸n+n≡m o≤n) (+-comm (n ∸ o) o)
+
+1≤n⇒1≤Poch[n,k] : ∀ {n} k → 1 ≤ n → 1 ≤ Poch n k
+1≤n⇒1≤Poch[n,k] {n} zero 1≤n = ≤-refl
+1≤n⇒1≤Poch[n,k] {n} (suc k) 1≤n = begin
+  1 * 1              ≤⟨ *-mono-≤ 1≤n (1≤n⇒1≤Poch[n,k] k (≤-step 1≤n)) ⟩
+  n * Poch (suc n) k ∎
+
 {-
 ------------------------------------------------------------------
 -- Properties of Multinomial coefficient
