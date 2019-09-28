@@ -312,54 +312,6 @@ P[n,k]≢0⇒k≤n {n} {k} P[n,k]≢0 with k ≤? n
   n<k : n < k
   n<k = ≰⇒> k≰n
 
-P-monoʳ-< : ∀ {n k r} → 2 ≤ n → r < n → k < r → P n k < P n r
-P-monoʳ-< {suc zero} {k} {r} (s≤s ()) r<n k<r
-P-monoʳ-< {n@(suc (suc n-2))} {k} {r} 2≤n r<n k<r = *-cancelʳ-< (P n k) (P n r) $ begin-strict
-  P n k * (n ∸ k) ! ≡⟨ P[n,k]*[n∸k]!≡n! k≤n ⟩
-  n !               ≡⟨ sym $ P[n,k]*[n∸k]!≡n! r≤n ⟩
-  P n r * (n ∸ r) ! <⟨ Lemma.*-monoʳ-<′ (P n r) (fromWitnessFalse P[n,r]≢0)
-                     (!-mono-<-≢0 {n ∸ r} {n ∸ k} {fromWitnessFalse n∸r≢0} n∸r<n∸k) ⟩
-  P n r * (n ∸ k) ! ∎
-  where
-  k≤r = <⇒≤ k<r
-  r≤n = <⇒≤ r<n
-  k≤n = ≤-trans k≤r r≤n
-
-  P[n,r]≢0 : P n r ≢ 0
-  P[n,r]≢0 = k≤n⇒P[n,k]≢0 {n} {r} r≤n
-
-  n∸r≢0 : n ∸ r ≢ 0
-  n∸r≢0 = Lemma.m<n⇒n∸m≢0 r<n
-
-  n∸r<n∸k : n ∸ r < n ∸ k
-  n∸r<n∸k = Lemma.∸-monoʳ-< {k} {r} n r≤n k<r
-
-{-
-P-monoʳ-≤ : ∀ {n k r} → r ≤ n → k ≤ r → P n k ≤ P n r
-P-monoʳ-≤ = ?
--}
-
-P-monoˡ-< : ∀ {m n k} {wit : k ≠0} → k ≤ m → m < n → P m k < P n k
-P-monoˡ-< {suc m} {suc n} {1}             {wit} k≤m (s≤s m<n) = s≤s $ begin-strict
-  m * 1 ≡⟨ *-identityʳ m ⟩
-  m     <⟨ m<n ⟩
-  n     ≡⟨ sym $ *-identityʳ n ⟩
-  n * 1 ∎
-P-monoˡ-< {suc m} {suc n} {suc (suc k-1)} {wit} (s≤s k≤m) (s≤s m<n) = begin-strict
-  suc m * P m (suc k-1) <⟨ *-mono-< (s≤s m<n) (P-monoˡ-< {m} {n} {suc k-1} {tt} k≤m m<n) ⟩
-  suc n * P n (suc k-1) ∎
-
-P-monoˡ-≤ : ∀ {m n} k → m ≤ n → P m k ≤ P n k
-P-monoˡ-≤ {m} {n} 0       m≤n = ≤-refl
-P-monoˡ-≤ {m} {n} k@(suc _) m≤n with k ≤? m
-P-monoˡ-≤ {m} {n} k@(suc _) m≤n | yes k≤m with Lemma.≤⇒≡∨< m≤n
-P-monoˡ-≤ {m} {n} k@(suc _) m≤n | yes k≤m | inj₁ refl = ≤-refl
-P-monoˡ-≤ {m} {n} k@(suc _) m≤n | yes k≤m | inj₂ m<n  = <⇒≤ $ P-monoˡ-< k≤m m<n
-P-monoˡ-≤ {m} {n} k@(suc _) m≤n | no k≰m = begin
-  P m k ≡⟨ n<k⇒P[n,k]≡0 (≰⇒> k≰m) ⟩
-  0     ≤⟨ z≤n ⟩
-  P n k ∎
-
 P[n,k]≤n^k : ∀ n k → P n k ≤ n ^ k
 P[n,k]≤n^k n       0       = ≤-refl
 P[n,k]≤n^k 0       (suc k) = ≤-refl
@@ -381,6 +333,71 @@ P[n,k]≤n! 0       (suc k) = ≤-step ≤-refl
 P[n,k]≤n! (suc n) (suc k) = begin
   suc n * P n k ≤⟨ *-monoʳ-≤ (suc n) (P[n,k]≤n! n k) ⟩
   suc n * n !   ∎
+
+P-monoʳ-< : ∀ {n k r} → 2 ≤ n → r < n → k < r → P n k < P n r
+P-monoʳ-< {suc zero}          {k} {r} (s≤s ()) r<n k<r
+P-monoʳ-< {n@(suc (suc n-2))} {k} {r} 2≤n r<n k<r = *-cancelʳ-< (P n k) (P n r) $ begin-strict
+  P n k * (n ∸ k) ! ≡⟨ P[n,k]*[n∸k]!≡n! k≤n ⟩
+  n !               ≡⟨ sym $ P[n,k]*[n∸k]!≡n! r≤n ⟩
+  P n r * (n ∸ r) ! <⟨ Lemma.*-monoʳ-<′ (P n r) (fromWitnessFalse P[n,r]≢0)
+                     (!-mono-<-≢0 {n ∸ r} {n ∸ k} {fromWitnessFalse n∸r≢0} n∸r<n∸k) ⟩
+  P n r * (n ∸ k) ! ∎
+  where
+  k≤r = <⇒≤ k<r
+  r≤n = <⇒≤ r<n
+  k≤n = ≤-trans k≤r r≤n
+
+  P[n,r]≢0 : P n r ≢ 0
+  P[n,r]≢0 = k≤n⇒P[n,k]≢0 {n} {r} r≤n
+
+  n∸r≢0 : n ∸ r ≢ 0
+  n∸r≢0 = Lemma.m<n⇒n∸m≢0 r<n
+
+  n∸r<n∸k : n ∸ r < n ∸ k
+  n∸r<n∸k = Lemma.∸-monoʳ-< {k} {r} n r≤n k<r
+
+P-monoʳ-≤ : ∀ {n k r} → r ≤ n → k ≤ r → P n k ≤ P n r
+P-monoʳ-≤ {zero}        {zero}        {zero}        r≤n      k≤r = ≤-refl
+P-monoʳ-≤ {zero}        {suc k}       {r}           r≤n       k≤r = z≤n
+P-monoʳ-≤ {suc zero}    {zero}        {zero}        r≤n       k≤r = ≤-refl
+P-monoʳ-≤ {suc zero}    {zero}        {suc zero}    r≤n       k≤r = ≤-refl
+P-monoʳ-≤ {suc zero}    {zero}        {suc (suc r)} (s≤s ())  k≤r
+P-monoʳ-≤ {suc zero}    {suc zero}    {suc zero}    (s≤s r≤n) k≤r = ≤-refl
+P-monoʳ-≤ {suc zero}    {suc (suc k)} {suc r}       r≤n       k≤r = z≤n
+P-monoʳ-≤ {suc (suc n)} {k} {r} r≤2+n k≤r with Lemma.≤⇒≡∨< r≤2+n
+P-monoʳ-≤ {suc (suc n)} {k} {r} r≤2+n k≤r | inj₁ r≡2+n = begin
+  P (2 + n) k ≡⟨ cong (λ v → P v k) (sym r≡2+n) ⟩
+  P r k       ≤⟨ P[n,k]≤n! r k ⟩
+  r !         ≡⟨ sym $ P[n,n]≡n! r ⟩
+  P r r       ≡⟨ cong (λ v → P v r) $ r≡2+n ⟩
+  P (2 + n) r ∎
+P-monoʳ-≤ {suc (suc n)} {k} {r} r≤2+n k≤r | inj₂ r<2+n with Lemma.≤⇒≡∨< k≤r
+P-monoʳ-≤ {suc (suc n)} {k} {r} r≤2+n k≤r | inj₂ r<2+n | inj₁ k≡r = begin
+  P (2 + n) k ≡⟨ cong (P (2 + n)) k≡r ⟩
+  P (2 + n) r ∎
+P-monoʳ-≤ {suc (suc n)} {k} {r} r≤2+n k≤r | inj₂ r<2+n | inj₂ k<r =
+   <⇒≤ (P-monoʳ-< {2 + n} {k} {r} (s≤s (s≤s z≤n)) r<2+n k<r)
+
+P-monoˡ-< : ∀ {m n k} {wit : k ≠0} → k ≤ m → m < n → P m k < P n k
+P-monoˡ-< {suc m} {suc n} {1}             {wit} k≤m (s≤s m<n) = s≤s $ begin-strict
+  m * 1 ≡⟨ *-identityʳ m ⟩
+  m     <⟨ m<n ⟩
+  n     ≡⟨ sym $ *-identityʳ n ⟩
+  n * 1 ∎
+P-monoˡ-< {suc m} {suc n} {suc (suc k-1)} {wit} (s≤s k≤m) (s≤s m<n) = begin-strict
+  suc m * P m (suc k-1) <⟨ *-mono-< (s≤s m<n) (P-monoˡ-< {m} {n} {suc k-1} {tt} k≤m m<n) ⟩
+  suc n * P n (suc k-1) ∎
+
+P-monoˡ-≤ : ∀ {m n} k → m ≤ n → P m k ≤ P n k
+P-monoˡ-≤ {m} {n} 0       m≤n = ≤-refl
+P-monoˡ-≤ {m} {n} k@(suc _) m≤n with k ≤? m
+P-monoˡ-≤ {m} {n} k@(suc _) m≤n | yes k≤m with Lemma.≤⇒≡∨< m≤n
+P-monoˡ-≤ {m} {n} k@(suc _) m≤n | yes k≤m | inj₁ refl = ≤-refl
+P-monoˡ-≤ {m} {n} k@(suc _) m≤n | yes k≤m | inj₂ m<n  = <⇒≤ $ P-monoˡ-< k≤m m<n
+P-monoˡ-≤ {m} {n} k@(suc _) m≤n | no k≰m = begin
+  P m k ≡⟨ n<k⇒P[n,k]≡0 (≰⇒> k≰m) ⟩
+  0     ≤⟨ z≤n ⟩
+  P n k ∎
 
 P[n,k]≡product[take[k,downFrom[1+n]]] :
   ∀ {n k} → k ≤ n → P n k ≡ product (take k (downFrom (suc n)))
