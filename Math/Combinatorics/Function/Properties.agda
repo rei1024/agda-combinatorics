@@ -382,6 +382,13 @@ P[n,k]≤n! (suc n) (suc k) = begin
   suc n * P n k ≤⟨ *-monoʳ-≤ (suc n) (P[n,k]≤n! n k) ⟩
   suc n * n !   ∎
 
+P[n,k]≡product[take[k,downFrom[1+n]]] :
+  ∀ {n k} → k ≤ n → P n k ≡ product (take k (downFrom (suc n)))
+P[n,k]≡product[take[k,downFrom[1+n]]] {n}     {zero}  k≤n       = refl
+P[n,k]≡product[take[k,downFrom[1+n]]] {suc n} {suc k} (s≤s k≤n) = begin-equality
+  suc n * P n k ≡⟨ cong (suc n *_) $ P[n,k]≡product[take[k,downFrom[1+n]]] k≤n ⟩
+  suc n * product (take k (downFrom (suc n))) ∎
+
 ------------------------------------------------------------------------
 -- Properties of CRec
 
