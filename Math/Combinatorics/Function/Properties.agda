@@ -9,7 +9,7 @@ module Math.Combinatorics.Function.Properties where
 -- stdlib
 
 open import Data.Empty using (⊥-elim)
-open import Data.List
+open import Data.List as List
 open import Data.Maybe
 open import Data.Nat
 open import Data.Nat.Properties
@@ -762,3 +762,13 @@ Poch-split m (suc n) o = begin-equality
   m * (Poch (suc m) n * Poch (suc m + n) o) ≡⟨ sym $ *-assoc m (Poch (suc m) n) (Poch (suc m + n) o) ⟩
   m * Poch (suc m) n * Poch (suc m + n) o   ≡⟨ cong (λ v → m * Poch (suc m) n * Poch v o) $ sym $ +-suc m n ⟩
   m * Poch (suc m) n * Poch (m + suc n) o   ∎
+
+{-
+------------------------------------------------------------------
+-- Properties of Multinomial coefficient
+MC[xs]≡sum[xs]!/product[map[!]xs] :
+  ∀ xs → MC xs ≡ _div_ (sum xs !) (product (List.map (_!) xs)) {?}
+MC[xs]≡sum[xs]!/product[map[!]xs] [] = refl
+MC[xs]≡sum[xs]!/product[map[!]xs] (x ∷ []) = ?
+MC[xs]≡sum[xs]!/product[map[!]xs] (x ∷ x₁ ∷ xs) = ?
+-}

@@ -11,6 +11,7 @@ open import Data.Fin using (toℕ)
 open import Data.Nat
 open import Data.Nat.DivMod
 open import Data.Nat.Properties using (+-0-commutativeMonoid)
+open import Data.List
 open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Data.Unit using (tt)
 open import Relation.Binary.PropositionalEquality
@@ -118,3 +119,12 @@ B n = sumₜ-syntax (suc n) (λ i → S2 n (toℕ i))
 Poch : ℕ → ℕ → ℕ
 Poch n 0       = 1
 Poch n (suc k) = n * Poch (suc n) k
+
+------------------------------------------------------------------------
+-- Multinomial coefficient
+{-
+MC : List ℕ → ℕ
+MC []                   = 1
+MC (x ∷ [])             = 1
+MC xxs@(x ∷ xs@(_ ∷ _)) = C (sum xxs) x * MC xs
+-}
