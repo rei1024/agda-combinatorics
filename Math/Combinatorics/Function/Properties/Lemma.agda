@@ -18,6 +18,7 @@ open import Algebra.FunctionProperties
 
 open ≤-Reasoning
 
+-- TODO: use m<n⇒0<n∸m
 m<n⇒n∸m≢0 : ∀ {m n} → m < n → n ∸ m ≢ 0
 m<n⇒n∸m≢0 {m} {n} m<n n∸m≡0 = (λ x → x (sym n∸m≡0)) $ <⇒≢ $ +-cancelʳ-< 0 (n ∸ m) $ begin-strict
   m           <⟨ m<n ⟩
@@ -45,7 +46,6 @@ m<n⇒n∸m≢0 {m} {n} m<n n∸m≡0 = (λ x → x (sym n∸m≡0)) $ <⇒≢ $
 
 ^-monoʳ-≤ : ∀ n → (suc n ^_) Preserves _≤_ ⟶ _≤_
 ^-monoʳ-≤ n {.0}       {o}        z≤n       = begin
-  suc n ^ 0 ≡⟨⟩
   1         ≤⟨ 1≤[1+m]^n n o ⟩
   suc n ^ o ∎
 ^-monoʳ-≤ n {.(suc _)} {.(suc _)} (s≤s {m} {o} m≤o) = begin
@@ -61,7 +61,7 @@ m<n⇒n∸m≢0 {m} {n} m<n n∸m≡0 = (λ x → x (sym n∸m≡0)) $ <⇒≢ $
   suc n ^ p ∎
 
 -- ∸-mono-< : _∸_ Preserves₂ _<_ ⟶ _>_ ⟶ _<_
-
+-- TODO: replace with stdlib
 ∸-monoʳ-< : ∀ {m n} o → n ≤ o → m < n → o ∸ m > o ∸ n
 ∸-monoʳ-< {m} {n} o n≤o m<n = +-cancelʳ-< (o ∸ n) (o ∸ m) $ begin-strict
   (o ∸ n) + m <⟨ +-monoʳ-< (o ∸ n) m<n ⟩ -- n<m

@@ -14,6 +14,7 @@ open import Data.Maybe
 open import Data.Nat
 open import Data.Nat.Properties
 open import Data.Nat.DivMod
+open import Data.Nat.Divisibility
 open import Data.Product
 open import Data.Sum
 open import Data.Unit using (tt)
@@ -30,6 +31,7 @@ import Math.Combinatorics.Function.Properties.Lemma as Lemma
 
 open ≤-Reasoning
 
+-- TODO: replace with Data.Nat.Predicate
 private
   _≠0 : ℕ → Set
   n ≠0 = False (n ≟ 0)
@@ -87,8 +89,6 @@ n!≤n^n (suc n) = begin
 [1+n]!/[1+n]≡n! : ∀ n → (suc n) ! / suc n ≡ n !
 [1+n]!/[1+n]≡n! n =
   sym $ Lemma.m*n≡o⇒m≡o/n (n !) (suc n) ((suc n) !) tt (*-comm (n !) (suc n))
-
--- m≤n⇒m∣n! : ∀ {m n} → suc m ≤ n → suc m ∣ n !
 
 ------------------------------------------------------------------------
 -- Properties of P
@@ -357,7 +357,7 @@ P-monoʳ-< {n@(suc (suc n-2))} {k} {r} 2≤n r<n k<r = *-cancelʳ-< (P n k) (P n
   n∸r<n∸k = Lemma.∸-monoʳ-< {k} {r} n r≤n k<r
 
 P-monoʳ-≤ : ∀ {n k r} → r ≤ n → k ≤ r → P n k ≤ P n r
-P-monoʳ-≤ {zero}        {zero}        {zero}        r≤n      k≤r = ≤-refl
+P-monoʳ-≤ {zero}        {zero}        {zero}        r≤n       k≤r = ≤-refl
 P-monoʳ-≤ {zero}        {suc k}       {r}           r≤n       k≤r = z≤n
 P-monoʳ-≤ {suc zero}    {zero}        {zero}        r≤n       k≤r = ≤-refl
 P-monoʳ-≤ {suc zero}    {zero}        {suc zero}    r≤n       k≤r = ≤-refl
@@ -389,7 +389,7 @@ P-monoˡ-< {suc m} {suc n} {suc (suc k-1)} {wit} (s≤s k≤m) (s≤s m<n) = beg
   suc n * P n (suc k-1) ∎
 
 P-monoˡ-≤ : ∀ {m n} k → m ≤ n → P m k ≤ P n k
-P-monoˡ-≤ {m} {n} 0       m≤n = ≤-refl
+P-monoˡ-≤ {m} {n} 0         m≤n = ≤-refl
 P-monoˡ-≤ {m} {n} k@(suc _) m≤n with k ≤? m
 P-monoˡ-≤ {m} {n} k@(suc _) m≤n | yes k≤m with Lemma.≤⇒≡∨< m≤n
 P-monoˡ-≤ {m} {n} k@(suc _) m≤n | yes k≤m | inj₁ refl = ≤-refl
@@ -793,7 +793,7 @@ o≤n⇒Poch[m,n]≡Poch[m+o,n∸o]*Poch[m,o] m {n} {o} o≤n = begin-equality
   n≡o+p = trans (sym $ m∸n+n≡m o≤n) (+-comm (n ∸ o) o)
 
 1≤n⇒1≤Poch[n,k] : ∀ {n} k → 1 ≤ n → 1 ≤ Poch n k
-1≤n⇒1≤Poch[n,k] {n} zero 1≤n = ≤-refl
+1≤n⇒1≤Poch[n,k] {n} zero    1≤n = ≤-refl
 1≤n⇒1≤Poch[n,k] {n} (suc k) 1≤n = begin
   1 * 1              ≤⟨ *-mono-≤ 1≤n (1≤n⇒1≤Poch[n,k] k (≤-step 1≤n)) ⟩
   n * Poch (suc n) k ∎

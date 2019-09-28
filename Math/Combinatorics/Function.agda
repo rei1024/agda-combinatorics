@@ -53,6 +53,7 @@ n!≢0 0      ()
 n!≢0 (suc n) [1+n]!≡0 with zero-product (suc n) (n !) [1+n]!≡0
 ... | inj₂ n!≡0 = n!≢0 n n!≡0
 
+-- TODO: use Data.Nat.Predicate
 False[n!≟0] : ∀ n → False (n ! ≟ 0)
 False[n!≟0] n = fromWitnessFalse (n!≢0 n)
 
@@ -60,6 +61,7 @@ False[n!≟0] n = fromWitnessFalse (n!≢0 n)
 -- Combination, Binomial coefficient
 -- C n k = P n k / k !
 
+-- TODO: use Data.Nat.Predicate
 C : ℕ → ℕ → ℕ
 C n k = (P n k div k !) {False[n!≟0] k}
 
