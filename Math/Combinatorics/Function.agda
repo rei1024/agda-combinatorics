@@ -72,6 +72,13 @@ CRec n       0       = 1
 CRec 0       (suc k) = 0
 CRec (suc n) (suc k) = CRec n k + CRec n (suc k)
 
+-- TODO: rename this to 'C' and deprecate old 'C' and move properties of _! to
+--- Math.Combinatorics.Function.Properties
+CFast : ℕ → ℕ → ℕ
+CFast n       0       = 1
+CFast 0       (suc k) = 0
+CFast (suc n) (suc k) = (CFast n k * suc n) / suc k
+
 ------------------------------------------------------------------------
 -- Double factorial
 -- A006882
