@@ -31,7 +31,7 @@ _! : ℕ → ℕ
 (suc n) ! = suc n * n !
 
 ------------------------------------------------------------------------
--- Permutation
+-- Permutation, Falling factorial
 -- P n k = n * (n - 1) * ... * (n - k + 1)  (k terms)
 
 P : ℕ → ℕ → ℕ
@@ -121,6 +121,11 @@ B n = sumₜ-syntax (suc n) (λ i → S2 n (toℕ i))
 Poch : ℕ → ℕ → ℕ
 Poch n 0       = 1
 Poch n (suc k) = n * Poch (suc n) k
+
+------------------------------------------------------------------------
+-- Catalan number
+Catalan : ℕ → ℕ
+Catalan n = C (2 * n) n / suc n
 
 ------------------------------------------------------------------------
 -- Multinomial coefficient

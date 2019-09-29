@@ -536,9 +536,10 @@ C[m+n,1+n]*[1+n]≡C[m+n,n]*m m n =
   (C (m + n) n * n !) * m         ≡⟨ Lemma.lemma₇ (C (m + n) n) (n !) m ⟩
   C (m + n) n * m * n !           ∎
 
--- C n k = ((n + 1 - k) / k) * C n (k - 1)
-C[n,1+k]*[1+k]≡C[n,k]*[n∸k] : ∀ {n k} → k ≤ n → C n (suc k) * suc k ≡ C n k * (n ∸ k)
-C[n,1+k]*[1+k]≡C[n,k]*[n∸k] {n} {k} k≤n = begin-equality
+
+C[n,1+k]*[1+k]≡C[n,k]*[n∸k] : ∀ n k → C n (suc k) * suc k ≡ C n k * (n ∸ k)
+C[n,1+k]*[1+k]≡C[n,k]*[n∸k] n k with k ≤? n
+... | yes k≤n = begin-equality
   C n (suc k) * suc k       ≡⟨ cong (λ v → C v (suc k) * suc k) (sym m+k≡n) ⟩
   C (m + k) (suc k) * suc k ≡⟨ C[m+n,1+n]*[1+n]≡C[m+n,n]*m m k ⟩
   C (m + k) k * m           ≡⟨ cong (λ v → C v k * m) m+k≡n ⟩
@@ -547,6 +548,19 @@ C[n,1+k]*[1+k]≡C[n,k]*[n∸k] {n} {k} k≤n = begin-equality
   m = n ∸ k
   m+k≡n : m + k ≡ n
   m+k≡n = m∸n+n≡m k≤n
+... | no k≰n  = begin-equality
+  C n (suc k) * suc k ≡⟨ cong (_* suc k) $ n<k⇒C[n,k]≡0 (≤-step n<k) ⟩
+  0 * suc k           ≡⟨⟩
+  0                   ≡⟨ sym $ *-zeroʳ (C n k) ⟩
+  C n k * 0           ≡⟨ cong (C n k *_) $ sym $ m≤n⇒m∸n≡0 (<⇒≤ n<k) ⟩
+  C n k * (n ∸ k)     ∎
+  where
+  n<k = ≰⇒> k≰n
+
+-- -- C n k = ((n + 1 - k) / k) * C n (k - 1)
+C[n,1+k]≡[C[n,k]*[n∸k]]/[1+k] : ∀ n k → C n (1 + k) ≡ (C n k * (n ∸ k)) / (1 + k)
+C[n,1+k]≡[C[n,k]*[n∸k]]/[1+k] n k =
+  Lemma.m*n≡o⇒m≡o/n (C n (suc k)) (suc k) (C n k * (n ∸ k)) tt (C[n,1+k]*[1+k]≡C[n,k]*[n∸k] n k)
 
 -- C n k ≡ (n / k) * C (n - 1) (k - 1)
 -- proved by C[n,k]*k!≡P[n,k]
@@ -796,6 +810,41 @@ o≤n⇒Poch[m,n]≡Poch[m+o,n∸o]*Poch[m,o] m {n} {o} o≤n = begin-equality
 1≤n⇒1≤Poch[n,k] {n} (suc k) 1≤n = begin
   1 * 1              ≤⟨ *-mono-≤ 1≤n (1≤n⇒1≤Poch[n,k] k (≤-step 1≤n)) ⟩
   n * Poch (suc n) k ∎
+
+------------------------------------------------------------------------
+-- Properties of Catalan number
+-- Catelan n = C (2 * n) n / suc n
+
+private
+  2*n≡n+n : ∀ n → 2 * n ≡ n + n
+  2*n≡n+n n = cong (n +_) $ +-identityʳ n
+
+  C[2*n,1+n]*[1+n]≡C[2*n,n]*n : ∀ n → C (2 * n) (1 + n) * (1 + n) ≡ C (2 * n) n * n
+  C[2*n,1+n]*[1+n]≡C[2*n,n]*n n = begin-equality
+    C (2 * n) (1 + n) * (1 + n) ≡⟨ cong (λ v → C v (1 + n) * (1 + n)) $ 2*n≡n+n n ⟩
+    C (n + n) (1 + n) * (1 + n) ≡⟨ C[m+n,1+n]*[1+n]≡C[m+n,n]*m n n ⟩
+    C (n + n) n * n             ≡⟨ cong (λ v → C v n * n) $ sym $ 2*n≡n+n n ⟩
+    C (2 * n) n * n             ∎
+
+  [C[2*n,n]∸C[2*n,1+n]]*[1+n]≡C[2*n,n] : ∀ n → (C (2 * n) n ∸ C (2 * n) (1 + n)) * (1 + n) ≡ C (2 * n) n
+  [C[2*n,n]∸C[2*n,1+n]]*[1+n]≡C[2*n,n] n = begin-equality
+    (C (2 * n) n ∸ C (2 * n) (1 + n)) * (1 + n)
+      ≡⟨ *-distribʳ-∸  (1 + n) (C (2 * n) n) (C (2 * n) (1 + n)) ⟩
+    C (2 * n) n * (1 + n) ∸ C (2 * n) (1 + n) * (1 + n)
+      ≡⟨ cong (C (2 * n) n * (1 + n) ∸_) $ C[2*n,1+n]*[1+n]≡C[2*n,n]*n n ⟩
+    C (2 * n) n * (1 + n) ∸ C (2 * n) n * n
+      ≡⟨ sym $ *-distribˡ-∸ (C (2 * n) n) (1 + n) n ⟩
+    C (2 * n) n * (suc n ∸ n) ≡⟨ cong (C (2 * n) n *_) $ m+n∸n≡m 1 n ⟩
+    C (2 * n) n * 1           ≡⟨ *-identityʳ (C (2 * n) n) ⟩
+    C (2 * n) n               ∎
+
+Catalan[n]≡C[2*n,n]∸[2*n,1+n] : ∀ n → Catalan n ≡ C (2 * n) n ∸ C (2 * n) (1 + n)
+Catalan[n]≡C[2*n,n]∸[2*n,1+n] n =
+  sym $ Lemma.m*n≡o⇒m≡o/n (C (2 * n) n ∸ C (2 * n) (1 + n)) (suc n)
+    (C (2 * n) n) tt ([C[2*n,n]∸C[2*n,1+n]]*[1+n]≡C[2*n,n] n)
+
+-- Catalan[n]≡[2*n]!/[[1+n]!*n!]
+-- Catalan[1+n]*[2+n]≡Catalan[n]*2*[2*n+1]
 
 {-
 ------------------------------------------------------------------
