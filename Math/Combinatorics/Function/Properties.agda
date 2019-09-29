@@ -824,27 +824,31 @@ CB[n]*n!*n!≡[2*n]! n = begin-equality
   (2 * n) !               ∎
 
 CB[1+n]*[1+n]≡2*[1+2*n]*CB[n] : ∀ n → CB (suc n) * suc n ≡ 2 * (1 + 2 * n) * CB n
-CB[1+n]*[1+n]≡2*[1+2*n]*CB[n] n =
-  Lemma.*-cancelʳ-≡′ (CB (1 + n) * suc n) (2 * (1 + 2 * n) * CB n)
-    {o = suc n * n ! * n !}
-    (fromWitnessFalse (Lemma.*-pres-≢0
-      (Lemma.*-pres-≢0 {a = suc n} (λ ()) ((n!≢0 n))) (n!≢0 n)))
-    ( begin-equality
-        CB (suc n) * suc n * (suc n * n ! * n !)
-          ≡⟨ Lemma.lemma₁₄ (CB (1 + n)) (suc n) (n !) ⟩
-        CB (suc n) * (suc n) ! * (suc n) ! ≡⟨ CB[n]*n!*n!≡[2*n]! (suc n) ⟩
-        (2 * suc n) ! ≡⟨ cong (_!) $ *-distribˡ-+ 2 1 n ⟩
-        (2 + 2 * n) ! ≡⟨⟩
-        (2 + 2 * n) * ((1 + 2 * n) * (2 * n) !)
-          ≡⟨ sym $ *-assoc (2 + 2 * n) (1 + 2 * n) ((2 * n) !) ⟩
-        (2 + 2 * n) * (1 + 2 * n) * (2 * n) !
-          ≡⟨ cong (_* (2 * n) !) $ Lemma.lemma₁₅ n ⟩
-        2 * (1 + 2 * n) * (1 + n) * (2 * n) !
-          ≡⟨ sym $ cong (2 * (1 + 2 * n) * (1 + n) *_) $ CB[n]*n!*n!≡[2*n]! n ⟩
-        2 * (1 + 2 * n) * (1 + n) * (CB n * n ! * n !)
-          ≡⟨ Lemma.lemma₁₆ (2 * (1 + 2 * n)) (1 + n) (CB n) (n !) ⟩
-        2 * (1 + 2 * n) * CB n * (suc n * n ! * n !) ∎
-    )
+CB[1+n]*[1+n]≡2*[1+2*n]*CB[n] n = Lemma.*-cancelʳ-≡′
+  (CB (1 + n) * suc n)
+  (2 * (1 + 2 * n) * CB n)
+  {o = suc n * n ! * n !}
+  (fromWitnessFalse (Lemma.*-pres-≢0
+    (Lemma.*-pres-≢0 {a = suc n} (λ ()) ((n!≢0 n))) (n!≢0 n)))
+  ( begin-equality
+      CB (suc n) * suc n * (suc n * n ! * n !)
+        ≡⟨ Lemma.lemma₁₄ (CB (1 + n)) (suc n) (n !) ⟩
+      CB (suc n) * (suc n) ! * (suc n) !
+        ≡⟨ CB[n]*n!*n!≡[2*n]! (suc n) ⟩
+      (2 * suc n) !
+        ≡⟨ cong (_!) $ *-distribˡ-+ 2 1 n ⟩
+      (2 + 2 * n) !
+        ≡⟨⟩
+      (2 + 2 * n) * ((1 + 2 * n) * (2 * n) !)
+        ≡⟨ sym $ *-assoc (2 + 2 * n) (1 + 2 * n) ((2 * n) !) ⟩
+      (2 + 2 * n) * (1 + 2 * n) * (2 * n) !
+        ≡⟨ cong (_* (2 * n) !) $ Lemma.lemma₁₅ n ⟩
+      2 * (1 + 2 * n) * (1 + n) * (2 * n) !
+        ≡⟨ sym $ cong (2 * (1 + 2 * n) * (1 + n) *_) $ CB[n]*n!*n!≡[2*n]! n ⟩
+      2 * (1 + 2 * n) * (1 + n) * (CB n * n ! * n !)
+        ≡⟨ Lemma.lemma₁₆ (2 * (1 + 2 * n)) (1 + n) (CB n) (n !) ⟩
+      2 * (1 + 2 * n) * CB n * (suc n * n ! * n !)
+        ∎ )
 
 ------------------------------------------------------------------------
 -- Properties of Catalan number
@@ -885,9 +889,7 @@ Catalan[n]*[1+n]≡C[2*n,n] n = begin-equality
 [1+n]!*n!*Catalan[n]≡[2*n]! n = begin-equality
   (suc n * n !) * n ! * Catalan n ≡⟨ Lemma.lemma₁₃ (suc n) (n !) (Catalan n) ⟩
   (Catalan n * suc n) * n ! * n ! ≡⟨ cong (λ v → v * n ! * n !) $ Catalan[n]*[1+n]≡C[2*n,n] n ⟩
-  C (2 * n) n * n ! * n !         ≡⟨ cong (λ v → C v n * n ! * n !) $ 2*n≡n+n n ⟩
-  C (n + n) n * n ! * n !         ≡⟨ C[m+n,m]*m!*n!≡[m+n]! n n ⟩
-  (n + n) !                       ≡⟨ sym $ cong (_!) $ 2*n≡n+n n ⟩
+  C (2 * n) n * n ! * n !         ≡⟨ CB[n]*n!*n!≡[2*n]! n ⟩
   (2 * n) !                       ∎
 
 Catalan[n]≡[2*n]!/[[1+n]!*n!] : ∀ n → Catalan n ≡ _/_ ((2 * n) !) ((1 + n) ! * n !) {proof (1 + n) n}

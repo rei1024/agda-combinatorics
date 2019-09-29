@@ -123,7 +123,8 @@ Poch n 0       = 1
 Poch n (suc k) = n * Poch (suc n) k
 
 ------------------------------------------------------------------------
--- Central Binomial coefficient
+-- Central binomial coefficient
+
 CB : ℕ → ℕ
 CB n = C (2 * n) n
 
@@ -144,6 +145,7 @@ A (suc n) (suc m) = (n ∸ m) * A n m + suc (suc m) * A n (suc m)
 
 ------------------------------------------------------------------------
 -- Eulerian numbers of the second kind
+
 E2 : ℕ → ℕ → ℕ
 E2 0       0       = 1
 E2 0       (suc m) = 0
