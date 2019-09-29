@@ -571,7 +571,7 @@ C[n,1+k]≡[C[n,k]*[n∸k]]/[1+k] n k =
   suc n * (C n k * k !)           ≡⟨ sym $ *-assoc (suc n) (C n k) (k !) ⟩
   suc n * C n k * k !             ∎
 
--- 両辺に n ! * o ! を右から掛ける
+-- Multiply both sides by n ! * o !
 C[m,n]*C[m∸n,o]≡C[m,o]*C[m∸o,n] : ∀ m n o → C m n * C (m ∸ n) o ≡ C m o * C (m ∸ o) n
 C[m,n]*C[m∸n,o]≡C[m,o]*C[m∸o,n] m n o =
   Lemma.*-cancelʳ-≡′ (C m n * C (m ∸ n) o) (C m o * C (m ∸ o) n) (False[n!≟0] n) $
@@ -675,9 +675,9 @@ n<k⇒S2[n,k]≡0 {.(suc _)} {.(suc (suc _))} (s≤s (s≤s {n} {k} n≤k)) = be
   0                             ∎
   where
   2+k = suc (suc k)
-  n<1+k : n < suc k
+  n<1+k : n < 1 + k
   n<1+k = s≤s n≤k
-  n<2+k : n < suc (suc k)
+  n<2+k : n < 2 + k
   n<2+k = ≤-step n<1+k
 
 S2[n,n]≡1 : ∀ n → S2 n n ≡ 1
@@ -758,7 +758,8 @@ Poch[1,k]≡k! k = Lemma.*-cancelʳ-≡′ (Poch 1 k) (k !) {1 !} tt $ begin-equ
   k ! * 1 !      ∎
 
 Poch[1+m,n]≡P[m+n,n] : ∀ m n → Poch (suc m) n ≡ P (m + n) n
-Poch[1+m,n]≡P[m+n,n] m n = Lemma.*-cancelʳ-≡′ (Poch (suc m) n) (P (m + n) n) (False[n!≟0] m) $ begin-equality
+Poch[1+m,n]≡P[m+n,n] m n =
+ Lemma.*-cancelʳ-≡′ (Poch (suc m) n) (P (m + n) n) (False[n!≟0] m) $ begin-equality
   Poch (suc m) n * m ! ≡⟨ Poch[1+n,k]*n!≡[n+k]! m n ⟩
   (m + n) !            ≡⟨ sym $ P[m+n,n]*m!≡[m+n]! m n ⟩
   P (m + n) n * m !    ∎
@@ -892,13 +893,14 @@ Catalan[n]*[1+n]≡CB[n] n = begin-equality
   CB n * n ! * n !                ≡⟨ CB[n]*n!*n!≡[2*n]! n ⟩
   (2 * n) !                       ∎
 
-Catalan[n]≡[2*n]!/[[1+n]!*n!] : ∀ n → Catalan n ≡ _/_ ((2 * n) !) ((1 + n) ! * n !) {proof (1 + n) n}
+Catalan[n]≡[2*n]!/[[1+n]!*n!] :
+  ∀ n → Catalan n ≡ _/_ ((2 * n) !) ((1 + n) ! * n !) {proof (1 + n) n}
 Catalan[n]≡[2*n]!/[[1+n]!*n!] n =
   Lemma.m*n≡o⇒m≡o/n (Catalan n) ((1 + n) ! * n !) ((2 * n) !) (proof (1 + n) n)
     ( begin-equality
-      Catalan n * (suc n ! * n !) ≡⟨ *-comm (Catalan n) (suc n ! * n !) ⟩
-      suc n ! * n ! * Catalan n   ≡⟨ [1+n]!*n!*Catalan[n]≡[2*n]! n ⟩
-      (2 * n) !                   ∎ )
+        Catalan n * (suc n ! * n !) ≡⟨ *-comm (Catalan n) (suc n ! * n !) ⟩
+        suc n ! * n ! * Catalan n   ≡⟨ [1+n]!*n!*Catalan[n]≡[2*n]! n ⟩
+        (2 * n) !                   ∎ )
 
 -- Goal: Catalan[1+n]*[2+n]≡Catalan[n]*2*[2*n+1]
 -- Goal2:
