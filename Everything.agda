@@ -9,8 +9,10 @@ module Everything where
 
 import Math.BinomialTheorem
 
+-- Definitions of combinatorial functions
 import Math.Combinatorics.Function
 
+-- Properties of combinatorial functions
 import Math.Combinatorics.Function.Properties
 
 import Math.Combinatorics.ListFunction

@@ -143,3 +143,20 @@ lemma₁₂ = solve 3 (λ m n o → m :* n :* o := n :* (m :* o)) refl
 lemma₁₃ : ∀ m n o → m * n * n * o ≡ o * m * n * n
 lemma₁₃ = solve 3 (λ m n o → m :* n :* n :* o := o :* m :* n :* n) refl
   where open +-*-Solver
+
+lemma₁₄ : ∀ m n o → m * n * (n * o * o) ≡ m * (n * o) * (n * o)
+lemma₁₄ = solve 3 (λ m n o → m :* n :* (n :* o :* o) := m :* (n :* o) :* (n :* o)) refl
+  where open +-*-Solver
+
+lemma₁₅ : ∀ n → (2 + 2 * n) * (1 + 2 * n) ≡ 2 * (1 + 2 * n) * (1 + n)
+lemma₁₅ = solve 1 (λ n →
+  (con 2 :+ con 2 :* n) :* (con 1 :+ con 2 :* n) :=
+  con 2 :* (con 1 :+ con 2 :* n) :* (con 1 :+ n)
+  ) refl
+  where open +-*-Solver
+
+lemma₁₆ : ∀ m n o p → m * n * (o * p * p) ≡ m * o * (n * p * p)
+lemma₁₆ = solve 4 (λ m n o p →
+  m :* n :* (o :* p :* p) := m :* o :* (n :* p :* p)
+  ) refl
+  where open +-*-Solver
