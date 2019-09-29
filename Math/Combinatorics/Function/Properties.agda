@@ -855,19 +855,19 @@ CB[1+n]*[1+n]≡2*[1+2*n]*CB[n] n = Lemma.*-cancelʳ-≡′
 -- Catelan n = C (2 * n) n / suc n
 
 private
-  C[2*n,1+n]*[1+n]≡C[2*n,n]*n : ∀ n → C (2 * n) (1 + n) * (1 + n) ≡ C (2 * n) n * n
-  C[2*n,1+n]*[1+n]≡C[2*n,n]*n n = begin-equality
+  C[2*n,1+n]*[1+n]≡CB[n]*n : ∀ n → C (2 * n) (1 + n) * (1 + n) ≡ CB n * n
+  C[2*n,1+n]*[1+n]≡CB[n]*n n = begin-equality
     C (2 * n) (1 + n) * (1 + n) ≡⟨ cong (λ v → C v (1 + n) * (1 + n)) $ 2*n≡n+n n ⟩
     C (n + n) (1 + n) * (1 + n) ≡⟨ C[m+n,1+n]*[1+n]≡C[m+n,n]*m n n ⟩
     C (n + n) n * n             ≡⟨ cong (λ v → C v n * n) $ sym $ 2*n≡n+n n ⟩
     C (2 * n) n * n             ∎
 
-  [C[2*n,n]∸C[2*n,1+n]]*[1+n]≡C[2*n,n] : ∀ n → (C (2 * n) n ∸ C (2 * n) (1 + n)) * (1 + n) ≡ C (2 * n) n
-  [C[2*n,n]∸C[2*n,1+n]]*[1+n]≡C[2*n,n] n = begin-equality
+  [C[2*n,n]∸C[2*n,1+n]]*[1+n]≡CB[n] : ∀ n → (C (2 * n) n ∸ C (2 * n) (1 + n)) * (1 + n) ≡ CB n
+  [C[2*n,n]∸C[2*n,1+n]]*[1+n]≡CB[n] n = begin-equality
     (C (2 * n) n ∸ C (2 * n) (1 + n)) * (1 + n)
       ≡⟨ *-distribʳ-∸  (1 + n) (C (2 * n) n) (C (2 * n) (1 + n)) ⟩
     C (2 * n) n * (1 + n) ∸ C (2 * n) (1 + n) * (1 + n)
-      ≡⟨ cong (C (2 * n) n * (1 + n) ∸_) $ C[2*n,1+n]*[1+n]≡C[2*n,n]*n n ⟩
+      ≡⟨ cong (C (2 * n) n * (1 + n) ∸_) $ C[2*n,1+n]*[1+n]≡CB[n]*n n ⟩
     C (2 * n) n * (1 + n) ∸ C (2 * n) n * n
       ≡⟨ sym $ *-distribˡ-∸ (C (2 * n) n) (1 + n) n ⟩
     C (2 * n) n * (suc n ∸ n) ≡⟨ cong (C (2 * n) n *_) $ m+n∸n≡m 1 n ⟩
@@ -877,19 +877,19 @@ private
 Catalan[n]≡C[2*n,n]∸C[2*n,1+n] : ∀ n → Catalan n ≡ C (2 * n) n ∸ C (2 * n) (1 + n)
 Catalan[n]≡C[2*n,n]∸C[2*n,1+n] n =
   sym $ Lemma.m*n≡o⇒m≡o/n (C (2 * n) n ∸ C (2 * n) (1 + n)) (suc n)
-    (C (2 * n) n) tt ([C[2*n,n]∸C[2*n,1+n]]*[1+n]≡C[2*n,n] n)
+    (C (2 * n) n) tt ([C[2*n,n]∸C[2*n,1+n]]*[1+n]≡CB[n] n)
 
-Catalan[n]*[1+n]≡C[2*n,n] : ∀ n → Catalan n * (1 + n) ≡ C (2 * n) n
-Catalan[n]*[1+n]≡C[2*n,n] n = begin-equality
+Catalan[n]*[1+n]≡CB[n] : ∀ n → Catalan n * (1 + n) ≡ C (2 * n) n
+Catalan[n]*[1+n]≡CB[n] n = begin-equality
   Catalan n * (1 + n)                         ≡⟨ cong (_* (1 + n)) $ Catalan[n]≡C[2*n,n]∸C[2*n,1+n] n ⟩
-  (C (2 * n) n ∸ C (2 * n) (1 + n)) * (1 + n) ≡⟨ [C[2*n,n]∸C[2*n,1+n]]*[1+n]≡C[2*n,n] n ⟩
+  (C (2 * n) n ∸ C (2 * n) (1 + n)) * (1 + n) ≡⟨ [C[2*n,n]∸C[2*n,1+n]]*[1+n]≡CB[n] n ⟩
   C (2 * n) n                                 ∎
 
 [1+n]!*n!*Catalan[n]≡[2*n]! : ∀ n → (1 + n) ! * n ! * Catalan n ≡ (2 * n) !
 [1+n]!*n!*Catalan[n]≡[2*n]! n = begin-equality
   (suc n * n !) * n ! * Catalan n ≡⟨ Lemma.lemma₁₃ (suc n) (n !) (Catalan n) ⟩
-  (Catalan n * suc n) * n ! * n ! ≡⟨ cong (λ v → v * n ! * n !) $ Catalan[n]*[1+n]≡C[2*n,n] n ⟩
-  C (2 * n) n * n ! * n !         ≡⟨ CB[n]*n!*n!≡[2*n]! n ⟩
+  (Catalan n * suc n) * n ! * n ! ≡⟨ cong (λ v → v * n ! * n !) $ Catalan[n]*[1+n]≡CB[n] n ⟩
+  CB n * n ! * n !                ≡⟨ CB[n]*n!*n!≡[2*n]! n ⟩
   (2 * n) !                       ∎
 
 Catalan[n]≡[2*n]!/[[1+n]!*n!] : ∀ n → Catalan n ≡ _/_ ((2 * n) !) ((1 + n) ! * n !) {proof (1 + n) n}
