@@ -110,6 +110,7 @@ m*n≡o⇒m≡o/n m n o wit m*n≡o = m≡n*o⇒n≡m/o o m n wit (sym m*n≡o)
 *-pres-≢0 {0}     {b} a≢0 b≢0 a*b≡0 = a≢0 refl
 *-pres-≢0 {suc a} {0} a≢0 b≢0 a*b≡0 = b≢0 refl
 
+-- TODO numbering
 lemma₅ : ∀ m n o p → (m + n) * (o * p) ≡ (o * (m * p)) + n * (o * p)
 lemma₅ = solve 4 (λ m n o p →
   (m :+ n) :* (o :* p) := (o :* (m :* p)) :+ (n :* (o :* p))) refl
@@ -137,4 +138,8 @@ lemma₁₁ = solve 4 (λ m n o p → (m :* n) :* (o :* p) := m :* o :* p :* n) 
 
 lemma₁₂ : ∀ m n o → m * n * o ≡ n * (m * o)
 lemma₁₂ = solve 3 (λ m n o → m :* n :* o := n :* (m :* o)) refl
+  where open +-*-Solver
+
+lemma₁₃ : ∀ m n o → m * n * n * o ≡ o * m * n * n
+lemma₁₃ = solve 3 (λ m n o → m :* n :* n :* o := o :* m :* n :* n) refl
   where open +-*-Solver

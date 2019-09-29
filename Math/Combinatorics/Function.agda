@@ -124,6 +124,7 @@ Poch n (suc k) = n * Poch (suc n) k
 
 ------------------------------------------------------------------------
 -- Catalan number
+
 Catalan : ℕ → ℕ
 Catalan n = C (2 * n) n / suc n
 

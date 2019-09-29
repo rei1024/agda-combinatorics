@@ -7,7 +7,6 @@
 module Math.Combinatorics.Function.Properties where
 
 -- stdlib
-
 open import Data.Empty using (⊥-elim)
 open import Data.List as List
 open import Data.Maybe
@@ -814,7 +813,7 @@ o≤n⇒Poch[m,n]≡Poch[m+o,n∸o]*Poch[m,o] m {n} {o} o≤n = begin-equality
 ------------------------------------------------------------------------
 -- Properties of Catalan number
 -- Catelan n = C (2 * n) n / suc n
-
+-- suc n * Catalan n ≡ C (2 * n) n
 private
   2*n≡n+n : ∀ n → 2 * n ≡ n + n
   2*n≡n+n n = cong (n +_) $ +-identityʳ n
@@ -843,7 +842,22 @@ Catalan[n]≡C[2*n,n]∸[2*n,1+n] n =
   sym $ Lemma.m*n≡o⇒m≡o/n (C (2 * n) n ∸ C (2 * n) (1 + n)) (suc n)
     (C (2 * n) n) tt ([C[2*n,n]∸C[2*n,1+n]]*[1+n]≡C[2*n,n] n)
 
--- Catalan[n]≡[2*n]!/[[1+n]!*n!]
+Catalan[n]*[1+n]≡C[2*n,n] : ∀ n → Catalan n * (1 + n) ≡ C (2 * n) n
+Catalan[n]*[1+n]≡C[2*n,n] n = begin-equality
+  Catalan n * (1 + n)                         ≡⟨ cong (_* (1 + n)) $ Catalan[n]≡C[2*n,n]∸[2*n,1+n] n ⟩
+  (C (2 * n) n ∸ C (2 * n) (1 + n)) * (1 + n) ≡⟨ [C[2*n,n]∸C[2*n,1+n]]*[1+n]≡C[2*n,n] n ⟩
+  C (2 * n) n                                 ∎
+
+[[1+n]!*n!]*Catalan[n]≡[2*n]! : ∀ n → (1 + n) ! * n ! * Catalan n ≡ (2 * n) !
+[[1+n]!*n!]*Catalan[n]≡[2*n]! n = begin-equality
+  (suc n * n !) * n ! * Catalan n ≡⟨ Lemma.lemma₁₃ (suc n) (n !) (Catalan n) ⟩
+  (Catalan n * suc n) * n ! * n ! ≡⟨ cong (λ v → v * n ! * n !) $ Catalan[n]*[1+n]≡C[2*n,n] n ⟩
+  C (2 * n) n * n ! * n !         ≡⟨ cong (λ v → C v n * n ! * n !) $ 2*n≡n+n n ⟩
+  C (n + n) n * n ! * n !         ≡⟨ C[m+n,m]*m!*n!≡[m+n]! n n ⟩
+  (n + n) !                       ≡⟨ sym $ cong (_!) $ 2*n≡n+n n ⟩
+  (2 * n) !                       ∎
+
+-- Catalan[n]≡[2*n]!/[[1+n]!*n!] : ∀ n →
 -- Catalan[1+n]*[2+n]≡Catalan[n]*2*[2*n+1]
 
 {-
