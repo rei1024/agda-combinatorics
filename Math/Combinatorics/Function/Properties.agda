@@ -14,7 +14,6 @@ open import Data.Maybe
 open import Data.Nat
 open import Data.Nat.Properties
 open import Data.Nat.DivMod
-open import Data.Nat.Divisibility
 open import Data.Product
 open import Data.Sum
 open import Data.Unit using (tt)
@@ -295,7 +294,7 @@ k≤n⇒1≤P[n,k] {.(suc n)} {.(suc k)} (s≤s {k} {n} k≤n) = begin
   suc n * P n k ∎
 
 k≤n⇒P[n,k]≢0 : ∀ {n k} → k ≤ n → P n k ≢ 0
-k≤n⇒P[n,k]≢0 {n} {k} k≤n P[n,k]≡0 = n≮n 0 $ subst (1 ≤_) P[n,k]≡0 $ k≤n⇒1≤P[n,k] k≤n
+k≤n⇒P[n,k]≢0 {n} {k} k≤n = Lemma.1≤n⇒n≢0 $ k≤n⇒1≤P[n,k] k≤n
 
 P[n,k]≡0⇒n<k : ∀ {n k} → P n k ≡ 0 → n < k
 P[n,k]≡0⇒n<k {n} {k} P[n,k]≡0 with n <? k
@@ -580,7 +579,7 @@ k≤n⇒1≤C[n,k] {n} {k} k≤n = Lemma.*-cancelʳ-≤′ 1 (C n k) (False[n!�
   C n k * k ! ∎
 
 k≤n⇒C[n,k]≢0 : ∀ {n k} → k ≤ n → C n k ≢ 0
-k≤n⇒C[n,k]≢0 {n} {k} k≤n C[n,k]≡0 = n≮n 0 $ subst (1 ≤_) C[n,k]≡0 $ k≤n⇒1≤C[n,k] k≤n
+k≤n⇒C[n,k]≢0 {n} {k} k≤n = Lemma.1≤n⇒n≢0 $ k≤n⇒1≤C[n,k] k≤n
 
 C[n,k]≡0⇒n<k : ∀ {n k} → C n k ≡ 0 → n < k
 C[n,k]≡0⇒n<k {n} {k} C[n,k]≡0 with n <? k

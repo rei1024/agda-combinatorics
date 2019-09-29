@@ -18,6 +18,9 @@ open import Algebra.FunctionProperties
 
 open ≤-Reasoning
 
+1≤n⇒n≢0 : ∀ {n} → 1 ≤ n → n ≢ 0
+1≤n⇒n≢0 .{suc _} (s≤s z≤n) ()
+
 -- TODO: use m<n⇒0<n∸m
 m<n⇒n∸m≢0 : ∀ {m n} → m < n → n ∸ m ≢ 0
 m<n⇒n∸m≢0 {m} {n} m<n n∸m≡0 = (λ x → x (sym n∸m≡0)) $ <⇒≢ $ +-cancelʳ-< 0 (n ∸ m) $ begin-strict

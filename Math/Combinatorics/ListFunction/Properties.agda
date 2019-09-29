@@ -25,8 +25,8 @@ import Data.List.Relation.Unary.Unique.Setoid.Properties as UniqueSₚ
 open import Data.Nat
 open import Data.Product as Prod using (_×_; _,_; ∃; proj₁; proj₂)
 open import Data.Sum using (inj₁; inj₂)
-open import Function
-open import Function.Equivalence using (_⇔_; equivalence)
+open import Function.Core
+open import Function.Equivalence using (_⇔_; equivalence) -- TODO: use new packages
 open import Relation.Binary.PropositionalEquality as P
 
 -- agda-combinatorics
@@ -120,7 +120,7 @@ module _ {a} {A : Set a} where
     x∷xs⊆ys : x ∷ xs ⊆ ys
     x∷xs⊆ys = combinations-∈⇒⊆ x∷xs∈c[len[x∷xs],ys]
 
-  combinations-∈⇔⊆ : ∀ {xs ys : List A} → xs ∈ combinations (length xs) ys ⇔ xs ⊆ ys
+  combinations-∈⇔⊆ : ∀ {xs ys : List A} → (xs ∈ combinations (length xs) ys) ⇔ (xs ⊆ ys)
   combinations-∈⇔⊆ = equivalence combinations-∈⇒⊆ combinations-⊆⇒∈
 
   All-⊆-combinations : ∀ k (xs : List A) → All (_⊆ xs) (combinations k xs)
