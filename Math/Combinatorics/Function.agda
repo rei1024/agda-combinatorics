@@ -41,43 +41,19 @@ P 0       (suc k) = 0
 P (suc n) (suc k) = suc n * P n k
 
 ------------------------------------------------------------------------
--- Properties of _!
-
-private
-  zero-product : ∀ m n → m * n ≡ 0 → m ≡ 0 ⊎ n ≡ 0
-  zero-product 0       n m*n≡0 = inj₁ refl
-  zero-product (suc m) 0 m*n≡0 = inj₂ refl
-
--- factorial never be 0
-n!≢0 : ∀ n → (n !) ≢ 0
-n!≢0 0      ()
-n!≢0 (suc n) [1+n]!≡0 with zero-product (suc n) (n !) [1+n]!≡0
-... | inj₂ n!≡0 = n!≢0 n n!≡0
-
--- TODO: use Data.Nat.Predicate
-False[n!≟0] : ∀ n → False (n ! ≟ 0)
-False[n!≟0] n = fromWitnessFalse (n!≢0 n)
-
-------------------------------------------------------------------------
 -- Combination, Binomial coefficient
 -- C n k = P n k / k !
 
--- TODO: use Data.Nat.Predicate
 C : ℕ → ℕ → ℕ
-C n k = (P n k div k !) {False[n!≟0] k}
+C n       0       = 1
+C 0       (suc k) = 0
+C (suc n) (suc k) = (C n k * suc n) / suc k
 
 -- recursive definition
 CRec : ℕ → ℕ → ℕ
 CRec n       0       = 1
 CRec 0       (suc k) = 0
 CRec (suc n) (suc k) = CRec n k + CRec n (suc k)
-
--- TODO: rename this to 'C' and deprecate old 'C' and move properties of _! to
---- Math.Combinatorics.Function.Properties
-CFast : ℕ → ℕ → ℕ
-CFast n       0       = 1
-CFast 0       (suc k) = 0
-CFast (suc n) (suc k) = (CFast n k * suc n) / suc k
 
 ------------------------------------------------------------------------
 -- Double factorial

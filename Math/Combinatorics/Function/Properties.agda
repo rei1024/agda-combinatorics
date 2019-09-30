@@ -24,7 +24,6 @@ open import Relation.Nullary.Decidable
 
 -- agda-combinatorics
 open import Math.Combinatorics.Function
-open import Math.Combinatorics.Function using (n!≢0 ; False[n!≟0]) public
 import Math.Combinatorics.Function.Properties.Lemma as Lemma
 
 open ≤-Reasoning
@@ -36,6 +35,21 @@ private
 
 ------------------------------------------------------------------------
 -- Properties of _!
+
+private
+  zero-product : ∀ m n → m * n ≡ 0 → m ≡ 0 ⊎ n ≡ 0
+  zero-product 0       n m*n≡0 = inj₁ refl
+  zero-product (suc m) 0 m*n≡0 = inj₂ refl
+
+-- factorial never be 0
+n!≢0 : ∀ n → (n !) ≢ 0
+n!≢0 0      ()
+n!≢0 (suc n) [1+n]!≡0 with zero-product (suc n) (n !) [1+n]!≡0
+... | inj₂ n!≡0 = n!≢0 n n!≡0
+
+-- TODO: use Data.Nat.Predicate
+False[n!≟0] : ∀ n → False (n ! ≟ 0)
+False[n!≟0] n = fromWitnessFalse (n!≢0 n)
 
 1≤n! : ∀ n → 1 ≤ n !
 1≤n! 0       = ≤-refl
@@ -418,51 +432,74 @@ CRec[n,k]*k!≡P[n,k] (suc n) (suc k) = begin-equality
   suc k * P n k + P n (suc k)                         ≡⟨ sym $ P[1+n,1+k]≡[1+k]*P[n,k]+P[n,1+k] n k ⟩
   P (suc n) (suc k)                                   ∎
 
-CRec[n,k]≡P[n,k]/k! : ∀ n k → CRec n k ≡ _div_ (P n k) (k !) {False[n!≟0] k}
-CRec[n,k]≡P[n,k]/k! n k = Lemma.m*n≡o⇒m≡o/n _ _ _ (False[n!≟0] k) (CRec[n,k]*k!≡P[n,k] n k)
+[1+k]*CRec[1+n,1+k]≡[1+n]*CRec[n,k] : ∀ n k → suc k * CRec (suc n) (suc k) ≡ suc n * CRec n k
+[1+k]*CRec[1+n,1+k]≡[1+n]*CRec[n,k] n k = Lemma.*-cancelʳ-≡′
+    (suc k * CRec (suc n) (suc k)) (suc n * CRec n k) (False[n!≟0] k) $ begin-equality
+  suc k * CRec (suc n) (suc k) * k ! ≡⟨ sym $ Lemma.lemma₈ (CRec (suc n) (suc k)) (suc k) (k !) ⟩
+  CRec (suc n) (suc k) * (suc k) !   ≡⟨ CRec[n,k]*k!≡P[n,k] (suc n) (suc k) ⟩
+  P (suc n) (suc k)                  ≡⟨⟩
+  suc n * P n k                      ≡⟨ sym $ cong (suc n *_) $ CRec[n,k]*k!≡P[n,k] n k ⟩
+  suc n * (CRec n k * k !)           ≡⟨ sym $ *-assoc (suc n) (CRec n k) (k !) ⟩
+  suc n * CRec n k * k !             ∎
+
+CRec[1+n,1+k]≡[CRec[n,k]*[1+n]]/[1+k] : ∀ n k →
+  CRec (suc n) (suc k) ≡ (CRec n k * suc n) / suc k
+CRec[1+n,1+k]≡[CRec[n,k]*[1+n]]/[1+k] n k = Lemma.m*n≡o⇒m≡o/n
+  (CRec (suc n) (suc k)) (suc k) (CRec n k * suc n) tt ( begin-equality
+    CRec (suc n) (suc k) * suc k ≡⟨ *-comm (CRec (suc n) (suc k)) (suc k) ⟩
+    suc k * CRec (suc n) (suc k) ≡⟨ [1+k]*CRec[1+n,1+k]≡[1+n]*CRec[n,k] n k ⟩
+    suc n * CRec n k             ≡⟨ *-comm (suc n) (CRec n k) ⟩
+    CRec n k * suc n             ∎ )
+
 
 ------------------------------------------------------------------------
 -- Properties of C
 
-C≡CRec : ∀ n k → C n k ≡ CRec n k
-C≡CRec n k = sym $ CRec[n,k]≡P[n,k]/k! n k
+C[n,k]≡CRec[n,k] : ∀ n k → C n k ≡ CRec n k
+C[n,k]≡CRec[n,k] n        zero   = refl
+C[n,k]≡CRec[n,k] zero    (suc k) = refl
+C[n,k]≡CRec[n,k] (suc n) (suc k) = begin-equality
+  (C n k * suc n) / suc k
+    ≡⟨ cong (λ v → (v * suc n) / suc k) $ C[n,k]≡CRec[n,k] n k ⟩
+  (CRec n k * suc n) / suc k
+    ≡⟨ sym $ CRec[1+n,1+k]≡[CRec[n,k]*[1+n]]/[1+k] n k ⟩
+  CRec (suc n) (suc k)
+    ∎
 
-C[n,0]≡1 : ∀ n → C n 0 ≡ 1
-C[n,0]≡1 n = begin-equality
-  P n 0 div 1 ≡⟨ n/1≡n (P n 0) ⟩
-  P n 0       ∎
+-- TODO prove directly
+-- P n k ∣ k !
+C[n,k]*k!≡P[n,k] : ∀ n k → C n k * k ! ≡ P n k
+C[n,k]*k!≡P[n,k] n k = trans (cong (_* k !) (C[n,k]≡CRec[n,k] n k)) (CRec[n,k]*k!≡P[n,k] n k)
 
-C[0,1+k]≡0 : ∀ k → C 0 (suc k) ≡ 0
-C[0,1+k]≡0 k = 0/n≡0 (suc k !)
+C[n,k]≡P[n,k]/k! : ∀ n k → C n k ≡ _div_ (P n k) (k !) {False[n!≟0] k}
+C[n,k]≡P[n,k]/k! n k = Lemma.m*n≡o⇒m≡o/n _ _ _ (False[n!≟0] k) (C[n,k]*k!≡P[n,k] n k)
 
 C[1+n,1+k]≡C[n,k]+C[n,1+k] : ∀ n k → C (suc n) (suc k) ≡ C n k + C n (suc k)
 C[1+n,1+k]≡C[n,k]+C[n,1+k] n k = begin-equality
-  C (suc n) (suc k)         ≡⟨ C≡CRec (suc n) (suc k) ⟩
-  CRec n k + CRec n (suc k) ≡⟨ sym $ cong₂ _+_ (C≡CRec n k) (C≡CRec n (suc k)) ⟩
+  C (suc n) (suc k)         ≡⟨ C[n,k]≡CRec[n,k] (suc n) (suc k) ⟩
+  CRec n k + CRec n (suc k) ≡⟨ sym $ cong₂ _+_ (C[n,k]≡CRec[n,k] n k) (C[n,k]≡CRec[n,k] n (suc k)) ⟩
   C n k + C n (suc k)       ∎
 
 n<k⇒C[n,k]≡0 : ∀ {n k} → n < k → C n k ≡ 0
 n<k⇒C[n,k]≡0 {n} {k} n<k = begin-equality
+  C n k                           ≡⟨ C[n,k]≡P[n,k]/k! n k ⟩
   (P n k div k !) {False[n!≟0] k} ≡⟨ cong (λ v → (v div k !) {False[n!≟0] k}) $ n<k⇒P[n,k]≡0 n<k ⟩
   (0 div k !) {False[n!≟0] k}     ≡⟨ 0/n≡0 (k !) ⟩
   0                               ∎
 
 C[n,1]≡n : ∀ n → C n 1 ≡ n
 C[n,1]≡n n = begin-equality
+  C n 1       ≡⟨ C[n,k]≡P[n,k]/k! n 1 ⟩
   P n 1 div 1 ≡⟨ n/1≡n (P n 1) ⟩
   P n 1       ≡⟨ P[n,1]≡n n ⟩
   n           ∎
 
 C[n,n]≡1 : ∀ n → C n n ≡ 1
 C[n,n]≡1 n = begin-equality
+  C n n                           ≡⟨ C[n,k]≡P[n,k]/k! n n ⟩
   (P n n div n !) {False[n!≟0] n} ≡⟨ cong (λ v → (v div n !) {False[n!≟0] n}) $ P[n,n]≡n! n ⟩
   (n ! div n !) {False[n!≟0] n}   ≡⟨ n/n≡1 (n !) ⟩
   1                               ∎
-
--- TODO prove directly
--- P n k ∣ k !
-C[n,k]*k!≡P[n,k] : ∀ n k → C n k * k ! ≡ P n k
-C[n,k]*k!≡P[n,k] n k = trans (cong (_* k !) (C≡CRec n k)) (CRec[n,k]*k!≡P[n,k] n k)
 
 -- proved by C[n,k]*k!≡P[n,k] and P[m+n,n]*m!≡[m+n]!
 C[m+n,n]*m!*n!≡[m+n]! : ∀ m n → C (m + n) n * m ! * n ! ≡ (m + n) !

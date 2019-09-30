@@ -67,7 +67,7 @@ module _ {a} {A : Set a} where
   length-combinations : ∀ (k : ℕ) (xs : List A) →
                         length (combinations k xs) ≡ C (length xs) k
   length-combinations 0       xs       = refl
-  length-combinations (suc k) []       = sym $ C[0,1+k]≡0 k
+  length-combinations (suc k) []       = refl
   length-combinations (suc k) (x ∷ xs) = begin
     length (map (x ∷_) (combinations k xs) ++ combinations (suc k) xs)
       ≡⟨ Lₚ.length-++ (map (x ∷_) (combinations k xs)) ⟩
