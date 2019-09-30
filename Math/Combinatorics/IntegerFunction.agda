@@ -18,4 +18,4 @@ import Math.Combinatorics.Function as ℕF
 
 P : ℤ → ℕ → ℤ
 P (+ n)      k = + (ℕF.P n k)
-P (-[1+ n ]) k = [-1]^ k * + ℕF.Poch (ℕ.suc n) k
+P (-[1+ n ]) k = [-1]^ k * (+ ℕF.Poch (ℕ.suc n) k)
