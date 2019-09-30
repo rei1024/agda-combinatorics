@@ -9,7 +9,8 @@ module Math.Combinatorics.Function.Properties where
 -- stdlib
 open import Data.Empty using (⊥-elim)
 open import Data.List as List
-open import Data.Maybe
+open import Data.List.Properties
+open import Data.Maybe hiding (zipWith)
 open import Data.Nat
 open import Data.Nat.Properties
 open import Data.Nat.DivMod
@@ -952,8 +953,7 @@ Catalan[1+n]*[2+n]≡2*[1+2*n]*Catalan[n] n = Lemma.*-cancelʳ-≡′
     2 * (1 + 2 * n) * (Catalan n * suc n)
       ≡⟨ sym $ *-assoc (2 * (1 + 2 * n)) (Catalan n) (suc n) ⟩
     2 * (1 + 2 * n) * Catalan n * suc n
-      ∎
-    )
+      ∎ )
 
 {-
 ------------------------------------------------------------------
@@ -964,3 +964,24 @@ MC[xs]≡sum[xs]!/product[map[!]xs] [] = refl
 MC[xs]≡sum[xs]!/product[map[!]xs] (x ∷ []) = ?
 MC[xs]≡sum[xs]!/product[map[!]xs] (x ∷ x₁ ∷ xs) = ?
 -}
+
+------------------------------------------------------------------------
+-- Properties of Pascal's triangle
+
+module _ {a} {A : Set a} where
+  length-gpascal : ∀ f (v0 v1 : A) n → length (gpascal f v0 v1 n) ≡ suc n
+  length-gpascal f v0 v1 zero    = refl
+  length-gpascal f v0 v1 (suc n) = begin-equality
+    length (zipWith f (v0 ∷ ps) (ps ∷ʳ v0))
+      ≡⟨ length-zipWith f (v0 ∷ ps) (ps ∷ʳ v0) ⟩
+    length (v0 ∷ ps) ⊓ length (ps ∷ʳ v0)
+      ≡⟨ cong (suc (length ps) ⊓_) $ length-++ ps ⟩
+    suc (length ps) ⊓ (length ps + 1)
+      ≡⟨ cong₂ (λ u v → suc u ⊓ v) hyp (trans (cong (_+ 1) hyp) (+-comm (suc n) 1)) ⟩
+    suc (suc n) ⊓ (suc (suc n))
+      ≡⟨ ⊓-idem (suc (suc n)) ⟩
+    suc (suc n)
+      ∎
+    where
+    ps = gpascal f v0 v1 n
+    hyp = length-gpascal f v0 v1 n

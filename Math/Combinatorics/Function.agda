@@ -148,3 +148,14 @@ MC []                   = 1
 MC (x ∷ [])             = 1
 MC xxs@(x ∷ xs@(_ ∷ _)) = C (sum xxs) x * MC xs
 -}
+
+------------------------------------------------------------------------
+-- Pascal's triangle
+
+gpascal : ∀ {a} {A : Set a} → (A → A → A) → A → A → ℕ → List A
+gpascal f v0 v1 0       = v1 ∷ []
+gpascal f v0 v1 (suc n) =
+  let ps = gpascal f v0 v1 n in zipWith f (v0 ∷ ps) (ps ∷ʳ v0)
+
+pascal : ℕ → List ℕ
+pascal = gpascal _+_ 0 1
