@@ -939,39 +939,21 @@ Catalan[n]≡[2*n]!/[[1+n]!*n!] n =
         suc n ! * n ! * Catalan n   ≡⟨ [1+n]!*n!*Catalan[n]≡[2*n]! n ⟩
         (2 * n) !                   ∎ )
 
--- Goal: Catalan[1+n]*[2+n]≡Catalan[n]*2*[2*n+1]
--- Goal2:
--- Catalan[1+n]*[2+n]*(1+n)!
--- C[2*[1+n],1+n]*(1+n)!
--- P (2*[1+n]) (1+n)
--- P (2+2n) (1+n)
--- (2+2n) * P (1+2n) n
--- (2+2n) * C (1+2n) n * n !
---
--- Catalan[n]*
--- Catalan[n]*2*[2*n+1]*[1+n]!
-
--- Goal: Catalan[1+n]*[2+n]≡Catalan[n]*2*[2*n+1]
--- Goal2 : Catalan[1+n]*[2+n]*[1+n]!≡Catalan[n]*2*[2*n+1]*[1+n]!
--- Catalan[1+n]*[2+n]*[1+n]!
--- C[2*(1+n),2+n]
--- (2+2n)!
--- [2+2n]*[1+2n]!
--- [2+2n]*[1+2n]*2n!
--- [2+2n]*[1+2n]*[1+n]!*n!*Catalan[n]
---
-
--- C[2*[1+n],1+n]
--- C[2+2n,1+n]
--- C[1+2n,n] + C[1+2n,1+n]
--- C[1+2n,n] + C[2n,n] + C[2n,1+n]
---
--- 2*C[2n,n]+(C[2n,n]∸C[2n,1+n])*2n
--- 2*C[2n,n]+Catalan[n]*2n
--- 2*Catalan[n]*[1+n]+Catalan[n]*2n
---  Catalan[n]*2n+Catalan[n]*2+Catalan[n]*2n
---
--- Catalan[n]*2*[2*n+1]
+Catalan[1+n]*[2+n]≡2*[1+2*n]*Catalan[n] : ∀ n →
+  Catalan (suc n) * (2 + n) ≡ 2 * (1 + 2 * n) * Catalan n
+Catalan[1+n]*[2+n]≡2*[1+2*n]*Catalan[n] n = Lemma.*-cancelʳ-≡′
+  (Catalan (suc n) * (2 + n)) (2 * (1 + 2 * n) * Catalan n) {o = suc n} tt
+  (begin-equality
+    Catalan (suc n) * (2 + n) * suc n
+      ≡⟨ cong (_* suc n) $ Catalan[n]*[1+n]≡CB[n] (suc n) ⟩
+    CB (suc n) * suc n ≡⟨ CB[1+n]*[1+n]≡2*[1+2*n]*CB[n] n ⟩
+    2 * (1 + 2 * n) * CB n
+      ≡⟨ sym $ cong (2 * (1 + 2 * n) *_) $ Catalan[n]*[1+n]≡CB[n] n ⟩
+    2 * (1 + 2 * n) * (Catalan n * suc n)
+      ≡⟨ sym $ *-assoc (2 * (1 + 2 * n)) (Catalan n) (suc n) ⟩
+    2 * (1 + 2 * n) * Catalan n * suc n
+      ∎
+    )
 
 {-
 ------------------------------------------------------------------
