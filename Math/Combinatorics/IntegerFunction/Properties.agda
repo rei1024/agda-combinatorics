@@ -31,7 +31,7 @@ import Math.Combinatorics.IntegerFunction.Properties.Lemma as Lemma
 [-1]^[m+n]≡[-1]^m*[-1]^n (ℕ.suc zero)      n = [-1]^[1+n]≡-1*[-1]^n n
 [-1]^[m+n]≡[-1]^m*[-1]^n (ℕ.suc (ℕ.suc m)) n = [-1]^[m+n]≡[-1]^m*[-1]^n m n
 
--- [-1]^n≡-1∨[-1]^n≡1
+-- TODO: [-1]^n≡-1∨[-1]^n≡1
 
 [-1]^[2*n]≡1 : ∀ n → [-1]^ (2 ℕ.* n) ≡ + 1
 [-1]^[2*n]≡1 zero = refl
@@ -40,8 +40,14 @@ import Math.Combinatorics.IntegerFunction.Properties.Lemma as Lemma
   [-1]^ (2 ℕ.+ 2 ℕ.* n) ≡⟨⟩
   [-1]^ (2 ℕ.* n)       ≡⟨ [-1]^[2*n]≡1 n ⟩
   + 1                   ∎
-  where
-  open ℤₚ.≤-Reasoning
+  where open ℤₚ.≤-Reasoning
+
+[-1]^[1+2*n]≡-1 : ∀ n → [-1]^ (1 ℕ.+ 2 ℕ.* n) ≡ -1ℤ
+[-1]^[1+2*n]≡-1 n = begin-equality
+  [-1]^ (1 ℕ.+ 2 ℕ.* n) ≡⟨ [-1]^[1+n]≡-1*[-1]^n (2 ℕ.* n) ⟩
+  -1ℤ * [-1]^ (2 ℕ.* n) ≡⟨ cong (-1ℤ *_) $ [-1]^[2*n]≡1 n ⟩
+  -1ℤ * + 1             ∎
+  where open ℤₚ.≤-Reasoning
 
 ------------------------------------------------------------------------
 -- Properties of permutation
