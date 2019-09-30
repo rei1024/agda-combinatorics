@@ -18,6 +18,9 @@ import Math.Combinatorics.Function.Properties as ℕFₚ
 open import Math.Combinatorics.IntegerFunction
 import Math.Combinatorics.IntegerFunction.Properties.Lemma as Lemma
 
+------------------------------------------------------------------------
+-- Properties of [-1]^_
+
 [-1]^[1+n]≡-1*[-1]^n : ∀ n → [-1]^ (ℕ.suc n) ≡ -1ℤ * [-1]^ n
 [-1]^[1+n]≡-1*[-1]^n zero              = refl
 [-1]^[1+n]≡-1*[-1]^n (ℕ.suc zero)      = refl
@@ -27,6 +30,21 @@ import Math.Combinatorics.IntegerFunction.Properties.Lemma as Lemma
 [-1]^[m+n]≡[-1]^m*[-1]^n zero              n = sym $ ℤₚ.*-identityˡ $ [-1]^ n
 [-1]^[m+n]≡[-1]^m*[-1]^n (ℕ.suc zero)      n = [-1]^[1+n]≡-1*[-1]^n n
 [-1]^[m+n]≡[-1]^m*[-1]^n (ℕ.suc (ℕ.suc m)) n = [-1]^[m+n]≡[-1]^m*[-1]^n m n
+
+-- [-1]^n≡-1∨[-1]^n≡1
+
+[-1]^[2*n]≡1 : ∀ n → [-1]^ (2 ℕ.* n) ≡ + 1
+[-1]^[2*n]≡1 zero = refl
+[-1]^[2*n]≡1 (ℕ.suc n) = begin-equality
+  [-1]^ (2 ℕ.* ℕ.suc n) ≡⟨ cong ([-1]^_) $ ℕₚ.*-distribˡ-+ 2 1 n ⟩
+  [-1]^ (2 ℕ.+ 2 ℕ.* n) ≡⟨⟩
+  [-1]^ (2 ℕ.* n)       ≡⟨ [-1]^[2*n]≡1 n ⟩
+  + 1                   ∎
+  where
+  open ℤₚ.≤-Reasoning
+
+------------------------------------------------------------------------
+-- Properties of permutation
 
 P[n,0]≡1 : ∀ n → P n 0 ≡ (+ 1)
 P[n,0]≡1 (+ n)      = refl

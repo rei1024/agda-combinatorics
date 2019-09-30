@@ -16,6 +16,10 @@ import Math.Combinatorics.Function as ℕF
 [-1]^ 1               = - (+ 1)
 [-1]^ ℕ.suc (ℕ.suc n) = [-1]^ n
 
+------------------------------------------------------------------------
+-- Permutation, Falling factorial
+-- P n k = n * (n - 1) * ... * (n - k + 1)  (k terms)
+
 P : ℤ → ℕ → ℤ
 P (+ n)      k = + (ℕF.P n k)
 P (-[1+ n ]) k = [-1]^ k * (+ ℕF.Poch (ℕ.suc n) k)
