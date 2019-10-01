@@ -70,6 +70,11 @@ P[n,1]≡n (-[1+ n ]) = begin-equality
 module _ where
   open ℤₚ.≤-Reasoning
 
+  P[-n,k]≡[-1]^k*Poch[n,k] : ∀ n k → P (- (+ n)) k ≡ [-1]^ k * + ℕF.Poch n k
+  P[-n,k]≡[-1]^k*Poch[n,k] zero      zero      = refl
+  P[-n,k]≡[-1]^k*Poch[n,k] zero      (ℕ.suc k) = sym $ ℤₚ.*-zeroʳ ([-1]^ ℕ.suc k)
+  P[-n,k]≡[-1]^k*Poch[n,k] (ℕ.suc n) k         = refl
+
   0≤n∧n<k⇒P[n,k]≡0 : ∀ {n k} → 0ℤ ≤ n → n < + k → P n k ≡ + 0
   0≤n∧n<k⇒P[n,k]≡0 {+_ n} {k} 0≤n (+<+ n<k) = cong (+_) $ ℕFₚ.n<k⇒P[n,k]≡0 n<k
 
@@ -94,14 +99,31 @@ module _ where
       ∎
     where p = ℕF.Poch (ℕ.suc (ℕ.suc n)) k
 
-  {-
+  P[n,1+k]≡n*P[n-1,k] : ∀ n k → P n (ℕ.suc k) ≡ n * P (n - 1ℤ) k
+  P[n,1+k]≡n*P[n-1,k] n k = begin-equality
+    P n (ℕ.suc k)                  ≡⟨ cong (λ v → P v (ℕ.suc k)) $ Lemma.lemma₂ n ⟩
+    P (1ℤ + (n - 1ℤ)) (ℕ.suc k)    ≡⟨ P[1+n,1+k]≡[1+n]*P[n,k] (n - 1ℤ) k ⟩
+    (1ℤ + (n - 1ℤ)) * P (n - 1ℤ) k ≡⟨ sym $ cong (_* P (n - 1ℤ) k) $ Lemma.lemma₂ n ⟩
+    n * P (n - 1ℤ) k               ∎
+
   P-split : ∀ (m : ℕ) (n : ℤ) (o : ℕ) → P ((+ m) + n) (m ℕ.+ o) ≡ P ((+ m) + n) m * P n o
-  P-split m (+ n)      o = begin-equality
-    + (ℕF.P (m ℕ.+ n) (m ℕ.+ o))
-      ≡⟨ cong (+_) $ ℕFₚ.P-split m n o ⟩
-    + (ℕF.P (m ℕ.+ n) m ℕ.* ℕF.P n o)
-      ≡⟨ sym $ ℤₚ.pos-distrib-* (ℕF.P (m ℕ.+ n) m) (ℕF.P n o) ⟩
-    + (ℕF.P (m ℕ.+ n)) m * + (ℕF.P n o)
+  P-split zero      n o = begin-equality
+    P (0ℤ + n) o         ≡⟨ cong (λ v → P v o) $ ℤₚ.+-identityˡ n ⟩
+    P n o                ≡⟨ sym $ ℤₚ.*-identityˡ (P n o) ⟩
+    1ℤ * P n o           ≡⟨ sym $ cong (_* P n o) $ P[n,0]≡1 (0ℤ + n) ⟩
+    P (0ℤ + n) 0 * P n o ∎
+  P-split (ℕ.suc m) n o = begin-equality
+    P (ℤ.suc (+ m) + n) (ℕ.suc (m ℕ.+ o))
+      ≡⟨ cong (λ v → P v (ℕ.suc (m ℕ.+ o))) $ ℤₚ.+-assoc 1ℤ (+ m) n ⟩
+    P (ℤ.suc (+ m + n)) (ℕ.suc (m ℕ.+ o))
+      ≡⟨ P[1+n,1+k]≡[1+n]*P[n,k] (+ m + n) (m ℕ.+ o) ⟩
+    ℤ.suc (+ m + n) * P (+ m + n) (m ℕ.+ o)
+      ≡⟨ cong (ℤ.suc (+ m + n) *_) $ P-split m n o ⟩
+    ℤ.suc (+ m + n) * (P (+ m + n) m * P n o)
+      ≡⟨ sym $ ℤₚ.*-assoc (ℤ.suc (+ m + n)) (P (+ m + n) m) (P n o) ⟩
+    ℤ.suc (+ m + n) * P (+ m + n) m * P n o
+      ≡⟨ sym $ cong (_* P n o) $ P[1+n,1+k]≡[1+n]*P[n,k] (+ m + n) m ⟩
+    P (ℤ.suc (+ m + n)) (ℕ.suc m) * P n o
+      ≡⟨ sym $ cong (λ v → P v (ℕ.suc m) * P n o) $ ℤₚ.+-assoc 1ℤ (+ m) n ⟩
+    P (+ (ℕ.suc m) + n) (ℕ.suc m) * P n o
       ∎
-  P-split m (-[1+ n ]) o = {!   !}
- -}

@@ -9,3 +9,7 @@ open import Relation.Binary.PropositionalEquality
 lemma₁ : ∀ a b c d → a * b * (c * d) ≡ (a * c) * (b * d)
 lemma₁ = solve 4 (λ a b c d → a :* b :* (c :* d) := (a :* c) :* (b :* d) ) refl
   where open +-*-Solver
+
+lemma₂ : ∀ n → n ≡ 1ℤ + (n - 1ℤ)
+lemma₂ = solve 1 (λ n → n := con 1ℤ :+ (n :- con 1ℤ)) refl
+  where open +-*-Solver
