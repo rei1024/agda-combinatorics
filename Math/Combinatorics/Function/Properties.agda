@@ -6,7 +6,7 @@
 
 module Math.Combinatorics.Function.Properties where
 
--- stdlib
+-- agda-stdlib
 open import Data.Empty using (⊥-elim)
 open import Data.List as List
 open import Data.List.Properties
@@ -955,14 +955,15 @@ Catalan[1+n]*[2+n]≡2*[1+2*n]*Catalan[n] n = Lemma.*-cancelʳ-≡′
     2 * (1 + 2 * n) * Catalan n * suc n
       ∎ )
 
-{-
+
 ------------------------------------------------------------------
 -- Properties of Multinomial coefficient
-MC[xs]≡sum[xs]!/product[map[!]xs] :
-  ∀ xs → MC xs ≡ _div_ (sum xs !) (product (List.map (_!) xs)) {?}
-MC[xs]≡sum[xs]!/product[map[!]xs] [] = refl
-MC[xs]≡sum[xs]!/product[map[!]xs] (x ∷ []) = ?
-MC[xs]≡sum[xs]!/product[map[!]xs] (x ∷ x₁ ∷ xs) = ?
+{-
+Multinomial[xs]≡sum[xs]!/product[map[!]xs] :
+  ∀ xs → Multinomial xs ≡ _/_ (sum xs !) (product (List.map (_!) xs)) {?}
+Multinomial[xs]≡sum[xs]!/product[map[!]xs] []                = refl
+Multinomial[xs]≡sum[xs]!/product[map[!]xs] (x ∷ [])          = ?
+Multinomial[xs]≡sum[xs]!/product[map[!]xs] (x ∷ xs@(_ ∷ xs)) = ?
 -}
 
 ------------------------------------------------------------------------

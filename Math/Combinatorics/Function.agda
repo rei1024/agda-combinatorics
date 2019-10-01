@@ -95,6 +95,7 @@ L (suc n@(suc _)) (suc k)       = (n + suc k) * L n (suc k) + L n k
 ------------------------------------------------------------------------
 -- Bell number
 -- A000110
+
 B : ℕ → ℕ
 B n = sumₜ-syntax (suc n) (λ i → S2 n (toℕ i))
 
@@ -142,12 +143,12 @@ E2 (suc n) (suc m) =
 
 ------------------------------------------------------------------------
 -- Multinomial coefficient
-{-
-MC : List ℕ → ℕ
-MC []                   = 1
-MC (x ∷ [])             = 1
-MC xxs@(x ∷ xs@(_ ∷ _)) = C (sum xxs) x * MC xs
--}
+-- MC xs = (sum xs) ! / product (map (_!) xs)
+
+Multinomial : List ℕ → ℕ
+Multinomial []                   = 1
+Multinomial (x ∷ [])             = 1
+Multinomial xxs@(x ∷ xs@(_ ∷ _)) = C (sum xxs) x * Multinomial xs
 
 ------------------------------------------------------------------------
 -- Pascal's triangle
