@@ -34,7 +34,7 @@ import Math.Combinatorics.IntegerFunction.Properties.Lemma as Lemma
 -- TODO: [-1]^n≡-1∨[-1]^n≡1
 
 [-1]^[2*n]≡1 : ∀ n → [-1]^ (2 ℕ.* n) ≡ + 1
-[-1]^[2*n]≡1 zero = refl
+[-1]^[2*n]≡1 zero      = refl
 [-1]^[2*n]≡1 (ℕ.suc n) = begin-equality
   [-1]^ (2 ℕ.* ℕ.suc n) ≡⟨ cong ([-1]^_) $ ℕₚ.*-distribˡ-+ 2 1 n ⟩
   [-1]^ (2 ℕ.+ 2 ℕ.* n) ≡⟨⟩
@@ -82,6 +82,15 @@ module _ where
     1ℤ * p                ≡⟨ ℤₚ.*-identityˡ p ⟩
     p                     ∎
     where p = + ℕF.Poch n (2 ℕ.* k)
+
+  P[-n,1+2*k]≡-ℕPoch[n,1+2*k] : ∀ n k →
+    P (- (+ n)) (1 ℕ.+ 2 ℕ.* k) ≡ - (+ ℕF.Poch n (1 ℕ.+ 2 ℕ.* k))
+  P[-n,1+2*k]≡-ℕPoch[n,1+2*k] n k = begin-equality
+    P (- (+ n)) (1 ℕ.+ 2 ℕ.* k) ≡⟨ P[-n,k]≡[-1]^k*ℕPoch[n,k] n (1 ℕ.+ 2 ℕ.* k) ⟩
+    [-1]^ (1 ℕ.+ 2 ℕ.* k) * p   ≡⟨ cong (_* p) $ [-1]^[1+2*n]≡-1 k ⟩
+    -1ℤ * p                     ≡⟨ ℤₚ.-1*n≡-n p ⟩
+    - p                         ∎
+    where p = + ℕF.Poch n (1 ℕ.+ 2 ℕ.* k)
 
   0≤n∧n<k⇒P[n,k]≡0 : ∀ {n k} → 0ℤ ≤ n → n < + k → P n k ≡ + 0
   0≤n∧n<k⇒P[n,k]≡0 {+_ n} {k} 0≤n (+<+ n<k) = cong (+_) $ ℕFₚ.n<k⇒P[n,k]≡0 n<k
