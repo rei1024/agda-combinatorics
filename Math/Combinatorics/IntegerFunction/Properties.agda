@@ -59,9 +59,9 @@ P[n,0]≡1 (-[1+ n ]) = refl
 P[n,1]≡n : ∀ n → P n 1 ≡ n
 P[n,1]≡n (+ n)      = cong (+_) $ ℕFₚ.P[n,1]≡n n
 P[n,1]≡n (-[1+ n ]) = begin-equality
-  - (+ 1) * (+ (ℕ.suc n ℕ.* 1))
-    ≡⟨ cong (λ v → - (+ 1) * (+ (ℕ.suc v))) $ ℕₚ.*-identityʳ n ⟩
-  - (+ 1) * (+ (ℕ.suc n))
+  -1ℤ * + ℕF.Poch (ℕ.suc n) 1
+    ≡⟨ cong (λ v → -1ℤ * + v) $ ℕFₚ.Poch[n,1]≡n (ℕ.suc n) ⟩
+  -1ℤ * (+ (ℕ.suc n))
     ≡⟨ ℤₚ.-1*n≡-n (+ (ℕ.suc n)) ⟩
   - (+ ℕ.suc n)
     ∎
@@ -70,10 +70,18 @@ P[n,1]≡n (-[1+ n ]) = begin-equality
 module _ where
   open ℤₚ.≤-Reasoning
 
-  P[-n,k]≡[-1]^k*Poch[n,k] : ∀ n k → P (- (+ n)) k ≡ [-1]^ k * + ℕF.Poch n k
-  P[-n,k]≡[-1]^k*Poch[n,k] zero      zero      = refl
-  P[-n,k]≡[-1]^k*Poch[n,k] zero      (ℕ.suc k) = sym $ ℤₚ.*-zeroʳ ([-1]^ ℕ.suc k)
-  P[-n,k]≡[-1]^k*Poch[n,k] (ℕ.suc n) k         = refl
+  P[-n,k]≡[-1]^k*ℕPoch[n,k] : ∀ n k → P (- (+ n)) k ≡ [-1]^ k * + ℕF.Poch n k
+  P[-n,k]≡[-1]^k*ℕPoch[n,k] zero      zero      = refl
+  P[-n,k]≡[-1]^k*ℕPoch[n,k] zero      (ℕ.suc k) = sym $ ℤₚ.*-zeroʳ ([-1]^ ℕ.suc k)
+  P[-n,k]≡[-1]^k*ℕPoch[n,k] (ℕ.suc n) k         = refl
+
+  P[-n,2*k]≡ℕPoch[n,2*k] : ∀ n k → P (- (+ n)) (2 ℕ.* k) ≡ + ℕF.Poch n (2 ℕ.* k)
+  P[-n,2*k]≡ℕPoch[n,2*k] n k = begin-equality
+    P (- (+ n)) (2 ℕ.* k) ≡⟨ P[-n,k]≡[-1]^k*ℕPoch[n,k] n (2 ℕ.* k) ⟩
+    [-1]^ (2 ℕ.* k) * p   ≡⟨ cong (_* p) $ [-1]^[2*n]≡1 k ⟩
+    1ℤ * p                ≡⟨ ℤₚ.*-identityˡ p ⟩
+    p                     ∎
+    where p = + ℕF.Poch n (2 ℕ.* k)
 
   0≤n∧n<k⇒P[n,k]≡0 : ∀ {n k} → 0ℤ ≤ n → n < + k → P n k ≡ + 0
   0≤n∧n<k⇒P[n,k]≡0 {+_ n} {k} 0≤n (+<+ n<k) = cong (+_) $ ℕFₚ.n<k⇒P[n,k]≡0 n<k
@@ -127,3 +135,14 @@ module _ where
       ≡⟨ sym $ cong (λ v → P v (ℕ.suc m) * P n o) $ ℤₚ.+-assoc 1ℤ (+ m) n ⟩
     P (+ (ℕ.suc m) + n) (ℕ.suc m) * P n o
       ∎
+
+  P-split-minus : ∀ m n o → P m (n ℕ.+ o) ≡ P m n * P (m - + n) o
+  P-split-minus m n o = begin-equality
+    P m (n ℕ.+ o)         ≡⟨ cong (λ v → P v (n ℕ.+ o)) m≡n+p ⟩
+    P (+ n + p) (n ℕ.+ o) ≡⟨ P-split n p o ⟩
+    P (+ n + p) n * P p o ≡⟨ sym $ cong (λ v → P v n * P p o) $ m≡n+p ⟩
+    P m n * P (m - + n) o ∎
+    where
+    p = m - + n
+    m≡n+p : m ≡ + n + (m - + n)
+    m≡n+p = Lemma.lemma₃ m (+ n)
