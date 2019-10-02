@@ -33,7 +33,7 @@ _! : ℕ → ℕ
 
 ------------------------------------------------------------------------
 -- Permutation, Falling factorial
--- P n k = n * (n - 1) * ... * (n - k + 1)  (k terms)
+-- P n k = (n)ₖ = n * (n - 1) * ... * (n - k + 1)  (k terms)
 
 P : ℕ → ℕ → ℕ
 P n       0       = 1
@@ -100,9 +100,8 @@ B : ℕ → ℕ
 B n = sumₜ-syntax (suc n) (λ i → S2 n (toℕ i))
 
 ------------------------------------------------------------------------
--- Rising factorial
--- Pochhammer symbol
--- Poch n k = n * (n + 1) * ... * (n + k - 1) (k terms)
+-- Pochhammer symbol, Rising factorial
+-- Poch n k = x^(n) = n * (n + 1) * ... * (n + k - 1) (k terms)
 
 Poch : ℕ → ℕ → ℕ
 Poch n 0       = 1
@@ -143,7 +142,7 @@ E2 (suc n) (suc m) =
 
 ------------------------------------------------------------------------
 -- Multinomial coefficient
--- MC xs = (sum xs) ! / product (map (_!) xs)
+-- Multinomial xs = (sum xs) ! / product (map _! xs)
 
 Multinomial : List ℕ → ℕ
 Multinomial []           = 1

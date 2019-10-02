@@ -454,7 +454,6 @@ CRec[1+n,1+k]≡[CRec[n,k]*[1+n]]/[1+k] n k = Lemma.m*n≡o⇒m≡o/n
     suc n * CRec n k             ≡⟨ *-comm (suc n) (CRec n k) ⟩
     CRec n k * suc n             ∎ )
 
-
 ------------------------------------------------------------------------
 -- Properties of C
 
@@ -603,7 +602,8 @@ C[n,1+k]≡[C[n,k]*[n∸k]]/[1+k] n k =
 -- C n k ≡ (n / k) * C (n - 1) (k - 1)
 -- proved by C[n,k]*k!≡P[n,k]
 [1+k]*C[1+n,1+k]≡[1+n]*C[n,k] : ∀ n k → suc k * C (suc n) (suc k) ≡ suc n * C n k
-[1+k]*C[1+n,1+k]≡[1+n]*C[n,k] n k = Lemma.*-cancelʳ-≡′ (suc k * C (suc n) (suc k)) (suc n * C n k) (False[n!≟0] k) $ begin-equality
+[1+k]*C[1+n,1+k]≡[1+n]*C[n,k] n k = Lemma.*-cancelʳ-≡′
+    (suc k * C (suc n) (suc k)) (suc n * C n k) (False[n!≟0] k) $ begin-equality
   suc k * C (suc n) (suc k) * k ! ≡⟨ sym $ Lemma.lemma₈ (C (suc n) (suc k)) (suc k) (k !) ⟩
   C (suc n) (suc k) * (suc k) !   ≡⟨ C[n,k]*k!≡P[n,k] (suc n) (suc k) ⟩
   P (suc n) (suc k)               ≡⟨⟩
@@ -957,7 +957,6 @@ Catalan[1+n]*[2+n]≡2*[1+2*n]*Catalan[n] n = Lemma.*-cancelʳ-≡′
     2 * (1 + 2 * n) * Catalan n * suc n
       ∎ )
 
-
 ------------------------------------------------------------------
 -- Properties of Multinomial coefficient
 
@@ -980,7 +979,7 @@ private
 
   product[map[!,xs]]≢0 : ∀ xs → product (List.map _! xs) ≢ 0
   product[map[!,xs]]≢0 xs = foldr-preservesᵇ {P = λ x → x ≢ 0} Lemma.*-pres-≢0
-    1≢0 (Allₚ.map⁺ {f = _!} $ All.universal (λ x x!≡0 → n!≢0 x x!≡0) xs)
+    1≢0 (Allₚ.map⁺ {f = _!} $ All.universal n!≢0 xs)
 
 Multinomial[xs]≡sum[xs]!/product[map[!,xs]] :
   ∀ xs → Multinomial xs ≡ _/_ (sum xs !) (product (List.map _! xs))
