@@ -994,6 +994,24 @@ Multinomial[xs]≡sum[xs]!/product[map[!,xs]] xs = Lemma.m*n≡o⇒m≡o/n
     sum xs !
       ∎ )
 
+Multinomial[[x]]≡1 : ∀ x → Multinomial (x ∷ []) ≡ 1
+Multinomial[[x]]≡1 x = begin-equality
+  C (x + 0) x * 1 ≡⟨ *-identityʳ (C (x + 0) x) ⟩
+  C (x + 0) x     ≡⟨ cong (λ v → C v x) $ +-identityʳ x ⟩
+  C x x           ≡⟨ C[n,n]≡1 x ⟩
+  1               ∎
+
+Multinomial[[m,n]]≡C[m+n,m] : ∀ m n → Multinomial (m ∷ n ∷ []) ≡ C (m + n) m
+Multinomial[[m,n]]≡C[m+n,m] m n = begin-equality
+  C (m + (n + 0)) m * Multinomial (n ∷ [])
+    ≡⟨ cong (C (m + (n + 0)) m *_) $ Multinomial[[x]]≡1 n ⟩
+  C (m + (n + 0)) m * 1
+    ≡⟨ *-identityʳ (C (m + (n + 0)) m) ⟩
+  C (m + (n + 0)) m
+    ≡⟨ cong (λ v → C (m + v) m) $ +-identityʳ n ⟩
+  C (m + n) m
+    ∎
+
 ------------------------------------------------------------------------
 -- Properties of Pascal's triangle
 
