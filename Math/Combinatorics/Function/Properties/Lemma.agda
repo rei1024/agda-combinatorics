@@ -160,3 +160,7 @@ lemma₁₆ = solve 4 (λ m n o p →
   m :* n :* (o :* p :* p) := m :* o :* (n :* p :* p)
   ) refl
   where open +-*-Solver
+
+lemma₁₇ : ∀ m n o p → m * n * (o * p) ≡ o * m * (n * p)
+lemma₁₇ = solve 4 (λ m n o p → m :* n :* (o :* p) := o :* m :* (n :* p)) refl
+  where open +-*-Solver

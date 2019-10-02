@@ -17,7 +17,6 @@ import Math.Combinatorics.Function.Properties
 
 -- Definitions of combinatorial functions on integer
 import Math.Combinatorics.IntegerFunction
-
 -- Properties of combinatorial functions on integer
 import Math.Combinatorics.IntegerFunction.Properties
 

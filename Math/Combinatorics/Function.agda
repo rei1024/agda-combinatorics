@@ -146,9 +146,8 @@ E2 (suc n) (suc m) =
 -- MC xs = (sum xs) ! / product (map (_!) xs)
 
 Multinomial : List ℕ → ℕ
-Multinomial []                   = 1
-Multinomial (x ∷ [])             = 1
-Multinomial xxs@(x ∷ xs@(_ ∷ _)) = C (sum xxs) x * Multinomial xs
+Multinomial []           = 1
+Multinomial xxs@(x ∷ xs) = C (sum xxs) x * Multinomial xs
 
 ------------------------------------------------------------------------
 -- Pascal's triangle

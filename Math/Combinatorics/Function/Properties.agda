@@ -10,6 +10,8 @@ module Math.Combinatorics.Function.Properties where
 open import Data.Empty using (⊥-elim)
 open import Data.List as List
 open import Data.List.Properties
+import Data.List.All as All
+import Data.List.All.Properties as Allₚ
 open import Data.Maybe hiding (zipWith)
 open import Data.Nat
 open import Data.Nat.Properties
@@ -958,13 +960,40 @@ Catalan[1+n]*[2+n]≡2*[1+2*n]*Catalan[n] n = Lemma.*-cancelʳ-≡′
 
 ------------------------------------------------------------------
 -- Properties of Multinomial coefficient
-{-
-Multinomial[xs]≡sum[xs]!/product[map[!]xs] :
-  ∀ xs → Multinomial xs ≡ _/_ (sum xs !) (product (List.map (_!) xs)) {?}
-Multinomial[xs]≡sum[xs]!/product[map[!]xs] []                = refl
-Multinomial[xs]≡sum[xs]!/product[map[!]xs] (x ∷ [])          = ?
-Multinomial[xs]≡sum[xs]!/product[map[!]xs] (x ∷ xs@(_ ∷ xs)) = ?
--}
+
+product[map[!,xs]]*Multinomial[xs]≡sum[xs]! : ∀ xs →
+  product (List.map _! xs) * Multinomial xs ≡ sum xs !
+product[map[!,xs]]*Multinomial[xs]≡sum[xs]! []           = refl
+product[map[!,xs]]*Multinomial[xs]≡sum[xs]! xxs@(x ∷ xs) = begin-equality
+  x ! * product (List.map _! xs) * (C (sum xxs) x * Multinomial xs)
+    ≡⟨ Lemma.lemma₁₇ (x !) (product (List.map _! xs)) (C (sum xxs) x) (Multinomial xs) ⟩
+  C (x + sum xs) x * x ! * (product (List.map _! xs) * Multinomial xs)
+    ≡⟨ cong (C (sum xxs) x * x ! *_) $ product[map[!,xs]]*Multinomial[xs]≡sum[xs]! xs ⟩
+  C (x + sum xs) x * x ! * sum xs !
+    ≡⟨ C[m+n,m]*m!*n!≡[m+n]! x (sum xs) ⟩
+  (x + sum xs) !
+   ∎
+
+private
+  1≢0 : 1 ≢ 0
+  1≢0 ()
+
+  product[map[!,xs]]≢0 : ∀ xs → product (List.map _! xs) ≢ 0
+  product[map[!,xs]]≢0 xs = foldr-preservesᵇ {P = λ x → x ≢ 0} Lemma.*-pres-≢0
+    1≢0 (Allₚ.map⁺ {f = _!} $ All.universal (λ x x!≡0 → n!≢0 x x!≡0) xs)
+
+Multinomial[xs]≡sum[xs]!/product[map[!,xs]] :
+  ∀ xs → Multinomial xs ≡ _/_ (sum xs !) (product (List.map _! xs))
+    {fromWitnessFalse (product[map[!,xs]]≢0 xs)}
+Multinomial[xs]≡sum[xs]!/product[map[!,xs]] xs = Lemma.m*n≡o⇒m≡o/n
+  (Multinomial xs) (product (List.map _! xs)) (sum xs !)
+  (fromWitnessFalse (product[map[!,xs]]≢0 xs)) (begin-equality
+    Multinomial xs * product (List.map _! xs)
+      ≡⟨ *-comm (Multinomial xs) (product (List.map _! xs)) ⟩
+    product (List.map _! xs) * Multinomial xs
+      ≡⟨ product[map[!,xs]]*Multinomial[xs]≡sum[xs]! xs ⟩
+    sum xs !
+      ∎ )
 
 ------------------------------------------------------------------------
 -- Properties of Pascal's triangle
