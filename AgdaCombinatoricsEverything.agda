@@ -9,6 +9,7 @@ module AgdaCombinatoricsEverything where
 
 import Math.BinomialTheorem.Generic
 
+-- Proof of the binomial theorem
 import Math.BinomialTheorem.Nat
 
 -- Definitions of combinatorial functions
