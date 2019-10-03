@@ -5,7 +5,7 @@
 
 {-# OPTIONS --without-K --safe #-}
 
-module Everything where
+module AgdaCombinatoricsEverything where
 
 import Math.BinomialTheorem.Generic
 
