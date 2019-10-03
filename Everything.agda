@@ -7,7 +7,9 @@
 
 module Everything where
 
-import Math.BinomialTheorem
+import Math.BinomialTheorem.Generic
+
+import Math.BinomialTheorem.Nat
 
 -- Definitions of combinatorial functions
 import Math.Combinatorics.Function

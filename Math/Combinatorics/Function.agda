@@ -6,6 +6,7 @@
 
 module Math.Combinatorics.Function where
 
+-- agda-stdlib
 import Algebra.Operations.CommutativeMonoid as CommutativeMonoidOperations
 open import Data.Fin using (toℕ)
 open import Data.Nat
@@ -17,6 +18,9 @@ open import Data.Unit using (tt)
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary using (yes; no; ¬_)
 open import Relation.Nullary.Decidable using (False; fromWitnessFalse)
+
+-- agda-misc
+open import Math.NumberTheory.Summation.Nat
 
 open CommutativeMonoidOperations +-0-commutativeMonoid
 
@@ -97,7 +101,7 @@ L (suc n@(suc _)) (suc k)       = (n + suc k) * L n (suc k) + L n k
 -- A000110
 
 B : ℕ → ℕ
-B n = sumₜ-syntax (suc n) (λ i → S2 n (toℕ i))
+B n = Σ[ i ≤ n ] S2 n i
 
 ------------------------------------------------------------------------
 -- Pochhammer symbol, Rising factorial
