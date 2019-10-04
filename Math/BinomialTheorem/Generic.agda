@@ -41,11 +41,11 @@ theorem x y 0       = begin
   1# * 1# + 0#
     ≡⟨⟩
   C 0 0 × ((x ^ 0) * y ^ (0 ∸ 0))
-    ≈⟨ sym $ Σ≤[f,0]≈f[0] (λ k → C 0 k × (x ^ k * y ^ (0 ∸ k))) ⟩
-  Σ≤ (λ k → C 0 k × (x ^ k * y ^ (0 ∸ k))) 0
+    ≈⟨ sym $ Σ≤[0,f]≈f[0] (λ k → C 0 k × (x ^ k * y ^ (0 ∸ k))) ⟩
+  Σ≤ 0 (λ k → C 0 k × (x ^ k * y ^ (0 ∸ k)))
     ∎
 theorem x y (suc n) = begin
   (x + y) * (x + y) ^ n ≈⟨ *-congˡ $ theorem x y n ⟩
   (x + y) * Σ[ k ≤ n ] (C n k × (x ^ k * y ^ (n ∸ k))) ≈⟨ {!   !} ⟩
-  Σ≤ (λ k → C (suc n) k × (x ^ k * y ^ (suc n ∸ k))) (suc n) ∎
+  Σ≤ (suc n) (λ k → C (suc n) k × (x ^ k * y ^ (suc n ∸ k))) ∎
 -}

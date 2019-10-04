@@ -71,8 +71,8 @@ theorem : ∀ x y n →
   (x + y) ^ n ≡ Σ[ k ≤ n ] (C n k * (x ^ k * y ^ (n ∸ k)))
 theorem x y 0       = begin-equality
   C 0 0 * ((x ^ 0) * y ^ (0 ∸ 0))
-    ≡⟨ sym $ Σ≤[f,0]≡f[0] (λ k → C 0 k * (x ^ k * y ^ (0 ∸ k))) ⟩
-  Σ≤ (λ k → C 0 k * (x ^ k * y ^ (0 ∸ k))) 0
+    ≡⟨ sym $ Σ≤[0,f]≈f[0] (λ k → C 0 k * (x ^ k * y ^ (0 ∸ k))) ⟩
+  Σ≤ 0 (λ k → C 0 k * (x ^ k * y ^ (0 ∸ k)))
     ∎
 theorem x y (suc n) = begin-equality
   (x + y) * (x + y) ^ n
@@ -80,11 +80,11 @@ theorem x y (suc n) = begin-equality
   (x + y) * Σ[ k ≤ n ] (C n k * (x ^ k * y ^ (n ∸ k)))
     ≡⟨ *-distribʳ-+ (Σ[ k ≤ n ] (C n k * (x ^ k * y ^ (n ∸ k)))) x y ⟩
   x * Σ[ k ≤ n ] (C n k * (x ^ k * y ^ (n ∸ k))) + y * Σ[ k ≤ n ] (C n k * (x ^ k * y ^ (n ∸ k)))
-    ≡⟨ sym $ cong₂ _+_ (Σ≤-*-commute (λ k → C n k * (x ^ k * y ^ (n ∸ k))) n x) (Σ≤-*-commute (λ k → C n k * (x ^ k * y ^ (n ∸ k))) n y) ⟩
+    ≡⟨ sym $ cong₂ _+_ (Σ≤-*-commute n x (λ k → C n k * (x ^ k * y ^ (n ∸ k)))) (Σ≤-*-commute n y (λ k → C n k * (x ^ k * y ^ (n ∸ k)))) ⟩
   Σ[ k ≤ n ] (x * (C n k * (x ^ k * y ^ (n ∸ k)))) + Σ[ k ≤ n ] (y * (C n k * (x ^ k * y ^ (n ∸ k))))
-    ≡⟨ cong₂ _+_ (Σ≤-congʳ n (λ k → lemma₁ x y n k)) (Σ≤-congʳ n (λ k → lemma₂ x y n k)) ⟩
+    ≡⟨ cong₂ _+_ (Σ≤-congˡ n (λ k → lemma₁ x y n k)) (Σ≤-congˡ n (λ k → lemma₂ x y n k)) ⟩
   Σ[ k ≤ n ] (C n k * ((x ^ suc k) * y ^ (n ∸ k))) + Σ[ k ≤ n ] (C n k * (x ^ k * y ^ suc (n ∸ k)))
-    ≡⟨ cong (Σ[ k ≤ n ] (C n k * (x ^ suc k * y ^ (n ∸ k))) +_) $ Σ<-push-suc (λ k → C n k * (x ^ k * y ^ suc (n ∸ k))) n ⟩
+    ≡⟨ cong (Σ[ k ≤ n ] (C n k * (x ^ suc k * y ^ (n ∸ k))) +_) $ Σ<-push-suc n (λ k → C n k * (x ^ k * y ^ suc (n ∸ k))) ⟩
   Σ[ k < n ] (C n k * ((x ^ suc k) * y ^ (n ∸ k))) + C n n * ((x ^ suc n) * y ^ (n ∸ n))
     + (C n 0 * (x ^ 0 * y ^ (suc (n ∸ 0))) + Σ[ k < n ] (C n (suc k) * (x ^ suc k * y ^ suc (n ∸ suc k))))
     ≡⟨⟩
@@ -92,7 +92,7 @@ theorem x y (suc n) = begin-equality
     + (1 * (1 * y ^ suc n) + Σ[ k < n ] (C n (suc k) * (x ^ suc k * y ^ suc (n ∸ suc k))))
     ≡⟨ cong₂ _+_ (cong (Σ[ k < n ] (C n k * (x ^ suc k * y ^ (n ∸ k))) +_) $ lemma₃ x y n)
                  (cong₂ _+_ (lemma₅ (y ^ suc n))
-                    (Σ<-congʳ-with-< n $ λ k k<n → cong (λ v → C n (suc k) * (x ^ suc k * y ^ v)) $ lemma₄ k<n)) ⟩
+                    (Σ<-congˡ-with-< n $ λ k k<n → cong (λ v → C n (suc k) * (x ^ suc k * y ^ v)) $ lemma₄ k<n)) ⟩
   Σ[ k < n ] (C n k * (x ^ suc k * y ^ (n ∸ k))) + x ^ suc n
     + (y ^ suc n + Σ[ k < n ] (C n (suc k) * (x ^ suc k * y ^ (n ∸ k))))
     ≡⟨ lemma₇ (Σ[ k < n ] (C n k * (x ^ suc k * y ^ (n ∸ k)))) (x ^ suc n) (y ^ suc n) (Σ[ k < n ] (C n (suc k) * (x ^ suc k * y ^ (n ∸ k)))) ⟩
@@ -108,8 +108,8 @@ theorem x y (suc n) = begin-equality
   y ^ suc n + Σ[ k ≤ n ] (C (suc n) (suc k) * (x ^ suc k * y ^ (n ∸ k)))
    ≡⟨ cong (_+ Σ[ k ≤ n ] (C (suc n) (suc k) * (x ^ suc k * y ^ (n ∸ k)))) $ sym $ lemma₅ (y ^ suc n) ⟩
   1 * (1 * y ^ suc n) + Σ[ k ≤ n ] (C (suc n) (suc k) * (x ^ suc k * y ^ (n ∸ k)))
-   ≡⟨ sym $ Σ≤-push-suc (λ k → C (suc n) k * (x ^ k * y ^ (suc n ∸ k))) n ⟩
-  Σ≤ (λ k → C (suc n) k * (x ^ k * y ^ (suc n ∸ k))) (suc n)
+   ≡⟨ sym $ Σ≤-push-suc n (λ k → C (suc n) k * (x ^ k * y ^ (suc n ∸ k))) ⟩
+  Σ≤ (suc n) (λ k → C (suc n) k * (x ^ k * y ^ (suc n ∸ k)))
     ∎
   where
   lemma : Σ[ k < n ] (C n k * (x ^ suc k * y ^ (n ∸ k))) +
@@ -117,11 +117,11 @@ theorem x y (suc n) = begin-equality
           Σ[ k < n ] (C (suc n) (suc k) * (x ^ suc k * y ^ (n ∸ k)))
   lemma = begin-equality
     Σ[ k < n ] (C n k * z k) + Σ[ k < n ] (C n (suc k) * z k)
-      ≡⟨ sym $ Σ<-distrib-+ (λ k → C n k * z k) (λ k → C n (suc k) * z k) n ⟩
+      ≡⟨ sym $ Σ<-distrib-+ n (λ k → C n k * z k) (λ k → C n (suc k) * z k) ⟩
     Σ[ k < n ] (C n k * z k + C n (suc k) * z k)
-      ≡⟨ Σ<-congʳ n (λ k → sym $ *-distribʳ-+ (z k) (C n k) (C n (suc k))) ⟩
+      ≡⟨ Σ<-congˡ n (λ k → sym $ *-distribʳ-+ (z k) (C n k) (C n (suc k))) ⟩
     Σ[ k < n ] ((C n k + C n (suc k)) * z k)
-      ≡⟨ Σ<-congʳ n (λ k → cong (_* z k) $ sym $ C[1+n,1+k]≡C[n,k]+C[n,1+k] n k) ⟩
+      ≡⟨ Σ<-congˡ n (λ k → cong (_* z k) $ sym $ C[1+n,1+k]≡C[n,k]+C[n,1+k] n k) ⟩
     Σ[ k < n ] (C (suc n) (suc k) * z k) ∎
     where
     z = λ k → x ^ suc k * y ^ (n ∸ k)
