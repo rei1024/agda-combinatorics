@@ -29,6 +29,9 @@ open import Relation.Nullary.Decidable
 open import Math.Combinatorics.Function
 import Math.Combinatorics.Function.Properties.Lemma as Lemma
 
+-- agda-misc
+open import Math.NumberTheory.Product.Nat
+
 open ≤-Reasoning
 
 -- TODO: replace with Data.Nat.Predicate
@@ -104,6 +107,14 @@ n!≤n^n (suc n) = begin
 [1+n]!/[1+n]≡n! : ∀ n → (suc n) ! / suc n ≡ n !
 [1+n]!/[1+n]≡n! n =
   sym $ Lemma.m*n≡o⇒m≡o/n (n !) (suc n) ((suc n) !) tt (*-comm (n !) (suc n))
+
+-- relation with product
+n!≡Π[k<n]suc : ∀ n → n ! ≡ Π< n suc
+n!≡Π[k<n]suc zero    = refl
+n!≡Π[k<n]suc (suc n) = begin-equality
+  suc n * n !      ≡⟨ *-comm (suc n) (n !) ⟩
+  n ! * suc n      ≡⟨ cong (_* suc n) $ n!≡Π[k<n]suc n ⟩
+  Π< n suc * suc n ∎
 
 ------------------------------------------------------------------------
 -- Properties of P
