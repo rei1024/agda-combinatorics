@@ -125,3 +125,15 @@ theorem x y (suc n) = begin-equality
     Σ[ k < n ] (C (suc n) (suc k) * z k) ∎
     where
     z = λ k → x ^ suc k * y ^ (n ∸ k)
+
+Σ[k≤n][C[n,k]]≡2^k : ∀ n → Σ[ k ≤ n ] (C n k) ≡ 2 ^ n
+Σ[k≤n][C[n,k]]≡2^k n = begin-equality
+  Σ[ k ≤ n ] (C n k)
+    ≡⟨ sym $ Σ≤-congˡ n (λ k → begin-equality
+        C n k * (1 ^ k * 1 ^ (n ∸ k)) ≡⟨ cong (C n k *_) $ cong₂ _*_ (^-zeroˡ k) (^-zeroˡ (n ∸ k)) ⟩
+        C n k * (1 * 1) ≡⟨ *-identityʳ (C n k) ⟩
+        C n k ∎ ) ⟩
+  Σ[ k ≤ n ] (C n k * (1 ^ k * 1 ^ (n ∸ k)))
+    ≡⟨ sym $ theorem 1 1 n ⟩
+  (1 + 1) ^ n
+    ∎
