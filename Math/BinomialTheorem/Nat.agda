@@ -122,7 +122,8 @@ theorem x y (suc n) = begin-equality
       ≡⟨ Σ<-congˡ n (λ k → sym $ *-distribʳ-+ (z k) (C n k) (C n (suc k))) ⟩
     Σ[ k < n ] ((C n k + C n (suc k)) * z k)
       ≡⟨ Σ<-congˡ n (λ k → cong (_* z k) $ sym $ C[1+n,1+k]≡C[n,k]+C[n,1+k] n k) ⟩
-    Σ[ k < n ] (C (suc n) (suc k) * z k) ∎
+    Σ[ k < n ] (C (suc n) (suc k) * z k)
+      ∎
     where
     z = λ k → x ^ suc k * y ^ (n ∸ k)
 
@@ -130,9 +131,12 @@ theorem x y (suc n) = begin-equality
 Σ[k≤n]C[n,k]≡2^n n = begin-equality
   Σ[ k ≤ n ] (C n k)
     ≡⟨ sym $ Σ≤-congˡ n (λ k → begin-equality
-        C n k * (1 ^ k * 1 ^ (n ∸ k)) ≡⟨ cong (C n k *_) $ cong₂ _*_ (^-zeroˡ k) (^-zeroˡ (n ∸ k)) ⟩
-        C n k * (1 * 1) ≡⟨ *-identityʳ (C n k) ⟩
-        C n k ∎ ) ⟩
+        C n k * (1 ^ k * 1 ^ (n ∸ k))
+          ≡⟨ cong (C n k *_) $ cong₂ _*_ (^-zeroˡ k) (^-zeroˡ (n ∸ k)) ⟩
+        C n k * (1 * 1)
+          ≡⟨ *-identityʳ (C n k) ⟩
+        C n k
+          ∎ ) ⟩
   Σ[ k ≤ n ] (C n k * (1 ^ k * 1 ^ (n ∸ k)))
     ≡⟨ sym $ theorem 1 1 n ⟩
   (1 + 1) ^ n
