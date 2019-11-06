@@ -362,7 +362,8 @@ P[n,k]≤n! (suc n) (suc k) = begin
 
 P-monoʳ-< : ∀ {n k r} → 2 ≤ n → r < n → k < r → P n k < P n r
 P-monoʳ-< {suc zero}          {k} {r} (s≤s ()) r<n k<r
-P-monoʳ-< {n@(suc (suc n-2))} {k} {r} 2≤n r<n k<r = *-cancelʳ-< (P n k) (P n r) $ begin-strict
+P-monoʳ-< {n@(suc (suc n-2))} {k} {r} 2≤n      r<n k<r =
+  *-cancelʳ-< (P n k) (P n r) $ begin-strict
   P n k * (n ∸ k) ! ≡⟨ P[n,k]*[n∸k]!≡n! k≤n ⟩
   n !               ≡⟨ sym $ P[n,k]*[n∸k]!≡n! r≤n ⟩
   P n r * (n ∸ r) ! <⟨ Lemma.*-monoʳ-<′ (P n r) (fromWitnessFalse P[n,r]≢0)
@@ -380,7 +381,7 @@ P-monoʳ-< {n@(suc (suc n-2))} {k} {r} 2≤n r<n k<r = *-cancelʳ-< (P n k) (P n
   n∸r≢0 = Lemma.m<n⇒n∸m≢0 r<n
 
   n∸r<n∸k : n ∸ r < n ∸ k
-  n∸r<n∸k = Lemma.∸-monoʳ-< {k} {r} n r≤n k<r
+  n∸r<n∸k = ∸-monoʳ-< k<r r≤n
 
 P-monoʳ-≤ : ∀ {n k r} → r ≤ n → k ≤ r → P n k ≤ P n r
 P-monoʳ-≤ {zero}        {zero}        {zero}        r≤n       k≤r = ≤-refl
@@ -543,14 +544,13 @@ C[n,k]*[n∸k]!*k!≡n! {n} {k} k≤n = begin-equality
   m+k≡n = m∸n+n≡m k≤n
 
 private
-  -- False[m!*n!≟0]
-  proof : ∀ m n → False ((m ! * n !) ≟ 0)
-  proof m n = fromWitnessFalse $ Lemma.*-pres-≢0 (n!≢0 m) (n!≢0 n)
+  False[m!*n!≟0] : ∀ m n → False ((m ! * n !) ≟ 0)
+  False[m!*n!≟0] m n = fromWitnessFalse $ Lemma.*-pres-≢0 (n!≢0 m) (n!≢0 n)
 
 C[n,k]≡n!/[[n∸k]!*k!] : ∀ {n k} → k ≤ n →
-  C n k ≡ _div_ (n !) ((n ∸ k) ! * k !) {proof (n ∸ k) k}
+  C n k ≡ _div_ (n !) ((n ∸ k) ! * k !) {False[m!*n!≟0] (n ∸ k) k}
 C[n,k]≡n!/[[n∸k]!*k!] {n} {k} k≤n = Lemma.m*n≡o⇒m≡o/n
-  (C n k) ((n ∸ k) ! * k !) (n !) (proof (n ∸ k) k) $ begin-equality
+  (C n k) ((n ∸ k) ! * k !) (n !) (False[m!*n!≟0] (n ∸ k) k) $ begin-equality
     C n k * ((n ∸ k) ! * k !) ≡⟨ sym $ *-assoc (C n k) ((n ∸ k) !) (k !) ⟩
     C n k * (n ∸ k) ! * k !   ≡⟨ C[n,k]*[n∸k]!*k!≡n! k≤n ⟩
     n !                       ∎
@@ -931,7 +931,7 @@ Catalan[n]≡C[2*n,n]∸C[2*n,1+n] n =
   sym $ Lemma.m*n≡o⇒m≡o/n (C (2 * n) n ∸ C (2 * n) (1 + n)) (suc n)
     (C (2 * n) n) tt ([C[2*n,n]∸C[2*n,1+n]]*[1+n]≡CB[n] n)
 
-Catalan[n]*[1+n]≡CB[n] : ∀ n → Catalan n * (1 + n) ≡ C (2 * n) n
+Catalan[n]*[1+n]≡CB[n] : ∀ n → Catalan n * (1 + n) ≡ CB n
 Catalan[n]*[1+n]≡CB[n] n = begin-equality
   Catalan n * (1 + n)                         ≡⟨ cong (_* (1 + n)) $ Catalan[n]≡C[2*n,n]∸C[2*n,1+n] n ⟩
   (C (2 * n) n ∸ C (2 * n) (1 + n)) * (1 + n) ≡⟨ [C[2*n,n]∸C[2*n,1+n]]*[1+n]≡CB[n] n ⟩
@@ -945,9 +945,9 @@ Catalan[n]*[1+n]≡CB[n] n = begin-equality
   (2 * n) !                       ∎
 
 Catalan[n]≡[2*n]!/[[1+n]!*n!] :
-  ∀ n → Catalan n ≡ _/_ ((2 * n) !) ((1 + n) ! * n !) {proof (1 + n) n}
+  ∀ n → Catalan n ≡ _/_ ((2 * n) !) ((1 + n) ! * n !) {False[m!*n!≟0] (1 + n) n}
 Catalan[n]≡[2*n]!/[[1+n]!*n!] n =
-  Lemma.m*n≡o⇒m≡o/n (Catalan n) ((1 + n) ! * n !) ((2 * n) !) (proof (1 + n) n)
+  Lemma.m*n≡o⇒m≡o/n (Catalan n) ((1 + n) ! * n !) ((2 * n) !) (False[m!*n!≟0] (1 + n) n)
     ( begin-equality
         Catalan n * (suc n ! * n !) ≡⟨ *-comm (Catalan n) (suc n ! * n !) ⟩
         suc n ! * n ! * Catalan n   ≡⟨ [1+n]!*n!*Catalan[n]≡[2*n]! n ⟩
@@ -968,11 +968,17 @@ Catalan[1+n]*[2+n]≡2*[1+2*n]*Catalan[n] n = Lemma.*-cancelʳ-≡′
     2 * (1 + 2 * n) * Catalan n * suc n
       ∎ )
 
+{- TODO
+Catalan[1+n]≡Σ[i≤n][Catalan[i]*Catalan[n∸i]] :
+  ∀ n → Catalan (suc n) ≡ Σ[ i ≤ n ] (Catalan i * Catalan (n ∸ i))
+Catalan[1+n]≡Σ[i≤n][Catalan[i]*Catalan[n∸i]] n = ?
+-}
+
 ------------------------------------------------------------------
 -- Properties of Multinomial coefficient
 
-product[map[!,xs]]*Multinomial[xs]≡sum[xs]! : ∀ xs →
-  product (List.map _! xs) * Multinomial xs ≡ sum xs !
+product[map[!,xs]]*Multinomial[xs]≡sum[xs]! :
+  ∀ xs → product (List.map _! xs) * Multinomial xs ≡ sum xs !
 product[map[!,xs]]*Multinomial[xs]≡sum[xs]! []           = refl
 product[map[!,xs]]*Multinomial[xs]≡sum[xs]! xxs@(x ∷ xs) = begin-equality
   x ! * product (List.map _! xs) * (C (sum xxs) x * Multinomial xs)
@@ -989,8 +995,9 @@ private
   1≢0 ()
 
   product[map[!,xs]]≢0 : ∀ xs → product (List.map _! xs) ≢ 0
-  product[map[!,xs]]≢0 xs = foldr-preservesᵇ {P = λ x → x ≢ 0} Lemma.*-pres-≢0
-    1≢0 (Allₚ.map⁺ {f = _!} $ All.universal n!≢0 xs)
+  product[map[!,xs]]≢0 xs =
+    foldr-preservesᵇ {P = λ x → x ≢ 0} Lemma.*-pres-≢0
+                     1≢0 (Allₚ.map⁺ {f = _!} $ All.universal n!≢0 xs)
 
 Multinomial[xs]≡sum[xs]!/product[map[!,xs]] :
   ∀ xs → Multinomial xs ≡ _/_ (sum xs !) (product (List.map _! xs))

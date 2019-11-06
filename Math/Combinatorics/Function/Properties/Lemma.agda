@@ -63,18 +63,6 @@ m<n⇒n∸m≢0 {m} {n} m<n n∸m≡0 = (λ x → x (sym n∸m≡0)) $ <⇒≢ $
   suc n ^ o ≤⟨ ^-monoʳ-≤ n o≤p ⟩
   suc n ^ p ∎
 
--- ∸-mono-< : _∸_ Preserves₂ _<_ ⟶ _>_ ⟶ _<_
--- TODO: replace with stdlib
-∸-monoʳ-< : ∀ {m n} o → n ≤ o → m < n → o ∸ m > o ∸ n
-∸-monoʳ-< {m} {n} o n≤o m<n = +-cancelʳ-< (o ∸ n) (o ∸ m) $ begin-strict
-  (o ∸ n) + m <⟨ +-monoʳ-< (o ∸ n) m<n ⟩ -- n<m
-  (o ∸ n) + n ≡⟨ m∸n+n≡m n≤o ⟩
-  o           ≡⟨ sym $ m∸n+n≡m m≤o ⟩
-  (o ∸ m) + m ∎
-  where
-  m≤o : m ≤ o
-  m≤o = <⇒≤ $ <-transˡ m<n n≤o
-
 *-cancelʳ-≤′ : ∀ m n {o} → False (o ≟ 0) → m * o ≤ n * o → m ≤ n
 *-cancelʳ-≤′ m n {suc o} tt = *-cancelʳ-≤ m n o
 

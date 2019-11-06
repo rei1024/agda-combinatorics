@@ -58,6 +58,15 @@ module _ {a} {A : Set a} where
   All-length-applyEach f (x ∷ xs) =
     refl ∷ (Allₚ.map⁺ $ All.map (cong suc) $ All-length-applyEach f xs)
 
+  applyEach-cong : ∀ (f g : A → A) (xs : List A) →
+    (∀ x → f x ≡ g x) → applyEach f xs ≡ applyEach g xs
+  applyEach-cong f g []       f≡g = refl
+  applyEach-cong f g (x ∷ xs) f≡g = begin
+    (f x ∷ xs) ∷ map (_∷_ x) (applyEach f xs)
+      ≡⟨ cong₂ (λ u v → (u ∷ xs) ∷ map (_∷_ x) v) (f≡g x) (applyEach-cong f g xs f≡g) ⟩
+    (g x ∷ xs) ∷ map (_∷_ x) (applyEach g xs)
+      ∎
+
 ------------------------------------------------------------------------
 -- Properties of `combinations`
 
@@ -330,6 +339,7 @@ module _ {a b} {A : Set a} {B : Set b} where
   -- unique-combinations-PW : UniqueS.Unique S xs → UniqueS.Unique (Equality S) (combinations k xs)
   -- unique-combinations-set : UniqueP.Unique xs → Unique (_-[ set ]_) (combinations k xs)
   -- sorted-combinations : Sorted _<_ xs → Sorted {- Lex._<_ _<_ -} (combinations k xs)
+  -- All-sorted-combinations : Sorted _<_ xs → All (Sorted _<_) (combinations k xs)
   -- filter-combinations = filter P ∘ combinations k xs
   -- each-disjoint-combinationsWithComplement : Unique zs → (xs , ys) ∈ combinationsWithComplement k zs → Disjoint xs ys
   -- combinationsWithComplement-∈⇒⊆ : (xs , ys) ∈ combinationsWithComplement (length xs) zs → xs ⊆ zs × ys ⊆ zs
