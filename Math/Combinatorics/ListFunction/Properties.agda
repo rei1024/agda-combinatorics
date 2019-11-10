@@ -167,7 +167,8 @@ module _ {a} {A : Set a} where
     UniquePₚ.++⁺ {_} {_} {map (x ∷_) (combinations k xs)} {combinations (suc k) xs}
       (UniquePₚ.map⁺ Lₚ.∷-injectiveʳ (unique-combinations k {xs} xs-unique))
       (unique-combinations (suc k) {xs} xs-unique)
-      λ {vs} vs∈map[x∷-]c[k,xs]×vs∈c[1+k,xs] → let
+      λ {vs} vs∈map[x∷-]c[k,xs]×vs∈c[1+k,xs] →
+      let
         vs∈map[x∷-]c[k,xs] = proj₁ vs∈map[x∷-]c[k,xs]×vs∈c[1+k,xs]
         vs∈c[1+k,xs] = proj₂ vs∈map[x∷-]c[k,xs]×vs∈c[1+k,xs]
         proof = ∈ₚ.∈-map⁻ (x ∷_) vs∈map[x∷-]c[k,xs]

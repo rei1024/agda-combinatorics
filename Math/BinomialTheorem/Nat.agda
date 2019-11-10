@@ -26,14 +26,16 @@ open ≤-Reasoning
 private
   lemma₁ : ∀ x y n k → x * (C n k * (x ^ k * y ^ (n ∸ k))) ≡
                        C n k * (x ^ suc k * y ^ (n ∸ k))
-  lemma₁ x y n k = solve 4 (λ m n o p → m :* (n :* (o :* p)) :=
-      n :* (m :* o :* p)) refl x (C n k) (x ^ k) (y ^ (n ∸ k))
+  lemma₁ x y n k =
+    solve 4 (λ m n o p → m :* (n :* (o :* p)) := n :* (m :* o :* p))
+            refl x (C n k) (x ^ k) (y ^ (n ∸ k))
     where open +-*-Solver
 
   lemma₂ : ∀ x y n k → y * (C n k * (x ^ k * y ^ (n ∸ k))) ≡
                        C n k * (x ^ k * y ^ suc (n ∸ k))
-  lemma₂ x y n k = solve 4 (λ m n o p → m :* (n :* (o :* p)) :=
-    n :* (o :* (m :* p)) ) refl y (C n k) (x ^ k) (y ^ (n ∸ k))
+  lemma₂ x y n k =
+    solve 4 (λ m n o p → m :* (n :* (o :* p)) := n :* (o :* (m :* p)) )
+            refl y (C n k) (x ^ k) (y ^ (n ∸ k))
     where open +-*-Solver
 
   glemma₃ : ∀ x y m n → C m m * (x ^ suc n * y ^ (n ∸ n)) ≡ x ^ suc n
@@ -66,6 +68,10 @@ private
   lemma₈ : ∀ m n o → m + n + o ≡ n + (o + m)
   lemma₈ = solve 3 (λ m n o → m :+ n :+ o := n :+ (o :+ m)) refl
     where open +-*-Solver
+{-
+(x+y)*(x+y)^n
+(x+y)*Σ[k≤n][Cnk*x^k*y^(n∸k)]
+-}
 
 theorem : ∀ x y n →
   (x + y) ^ n ≡ Σ[ k ≤ n ] (C n k * (x ^ k * y ^ (n ∸ k)))
