@@ -25,7 +25,7 @@ import Data.List.Relation.Unary.Unique.Setoid.Properties as UniqueSₚ
 open import Data.Nat
 open import Data.Product as Prod using (_×_; _,_; ∃; proj₁; proj₂)
 open import Data.Sum using (inj₁; inj₂)
-open import Function.Core
+open import Function.Base
 open import Function.Equivalence using (_⇔_; equivalence) -- TODO: use new packages
 open import Relation.Binary.PropositionalEquality as P
 

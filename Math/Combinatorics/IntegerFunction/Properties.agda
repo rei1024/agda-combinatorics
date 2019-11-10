@@ -11,7 +11,7 @@ import Data.Nat.Properties as ℕₚ
 open import Data.Integer as ℤ
 import Data.Integer.Properties as ℤₚ
 open import Relation.Binary.PropositionalEquality
-open import Function.Core
+open import Function.Base
 
 import Math.Combinatorics.Function as ℕF
 import Math.Combinatorics.Function.Properties as ℕFₚ
